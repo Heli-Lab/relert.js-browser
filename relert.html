@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn" charset="UTF-8">
+    <head>
+        <title>relert.js-browser</title>
+        <link rel="shortcut icon" href="./relert.ico">
+        <link rel="stylesheet" type="text/css" href="./css/relert.css">
+    </head>
+    <body>
+        <div class="container">
+            <div id="sidebar">
+                <button id="sidebar-btn-open">打开地图</button>
+                <input type="file" accept=".map" id="openMap" style="display: none;"/>
+                <div>
+                    <ul id="timeline"></ul>
+                </div>
+            </div>
+            <div id="main">
+                <div id="topbar">
+                    <button id="topbar-btn-new" class="card">新建</button>
+                    <button id="topbar-btn-open" class="card">打开</button>
+                    <button id="topbar-btn-save" class="card">保存</button>
+                    <label>文件名</label>
+                    <input placeholder="" />
+                    <button id="topbar-btn-run" class="card">运行</button>
+                    <input type="file" accept=".js" id="openJs" style="display: none;"/>
+                    <button id="topbar-btn-help" class="card right">帮助</button>
+                </div>
+                <div id="content">
+                    <div id="editor"></div>
+                    <div id="log-area">
+                        <div id="log-box">
+                            <div id="log"></div>
+                        </div>
+                        <div id="log-toolbar">
+                            <button id="log-btn-clear" class="card right">清空</button>
+                            <button class="card">错误</button>
+                            <button class="card">警告</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 引入jQuery -->
+        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+        <!-- Editor 相关 -->
+        <script src="https://cdn.bootcdn.net/ajax/libs/ace/test/ace.min.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/ace/test/mode-javascript.min.js"></script>
+        <script>
+            // Editor 初始化
+            const __editor = ace.edit('editor');
+            __editor.setFontSize(14);
+            __editor.session.setMode('ace/mode/javascript');
+            __editor.session.setTabSize(4);
+            __editor.session.setUseSoftTabs(true);
+
+            // 文件关联
+            const $openJs = document.getElementById('openJs');
+            $openJs.onchange = () => {
+                relert.log('Opening Script...');
+                if ($openJs.files[0]) {
+                    let fr = new FileReader();
+                    fr.onloadend = (e) => {
+                        __editor.setValue(e.target.result);
+                        relert.log('Done.');
+                    }
+                    fr.readAsText($openJs.files[0]);
+                }
+            }
+
+            const $openMap = document.getElementById('openMap');
+            $openMap.onchange = () => {
+                timeline.openFile($openMap.files[0]);
+            }
+
+            // 按钮事件
+
+            // 左侧边栏
+            $('#sidebar-btn-open').on('click', () => {
+                $openMap.click();
+            })
+
+            // 顶栏
+            $('#topbar-btn-open').on('click', () => {
+                $openJs.click();
+            });
+
+            $('#topbar-btn-save').on('click', () => {
+                $openJs.click();
+            });
+
+            $('#topbar-btn-run').on('click', () => {
+                timeline.runScript(__editor.getValue(), 'noname.js');
+            });
+
+            $('#topbar-btn-help').on('click', () => {
+                window.open('./readme.html','_blank');
+            });
+
+            // log栏
+            $('#log-btn-clear').on('click', () => {
+                relert.cls();
+            });
+
+            // 退出
+            window.onbeforeunload = function() {
+                return '是否确认退出？';
+            }
+
+        </script>
+        <script type="text/javascript" src="./script/iconv-lite.min.js"></script>
+        <script type="text/javascript" src="./script/relert.js"></script>
+    </body>
+</html>
