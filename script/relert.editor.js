@@ -10,6 +10,8 @@ const editor = new function() {
     this.tabs = {};
     // 当前页
     this.currentIndex = 0;
+    // 拖拽事件
+    this.draggingIndex = 0;
 
     // 自增Id
     let tabId = 0;
@@ -32,7 +34,7 @@ const editor = new function() {
         let list = '';
         for (let i in this.tabs) {
             list += `
-            <div class="tab${i == this.currentIndex ? ' active' : ''}" index="${i}">
+            <div class="tab${i == this.currentIndex ? ' active' : ''}" index="${i}" draggable="true">
                 ${this.tabs[i].fileName}
                 <div class="close">×</div>
             </div>
@@ -62,6 +64,26 @@ const editor = new function() {
         });
 
         $('#tabs').trigger('wheel');
+
+        //标签拖拽事件
+
+        $('#tabs>.tab').on('dragover', function(ev) {
+            if (!$(this).hasClass('new')) {
+                ev.preventDefault();
+            }
+        });
+
+        $('#tabs>.tab').on('dragstart', function(ev) {
+            if (!$(this).hasClass('new')) {
+                editor.draggingIndex = $(this).attr('index');
+            }
+        });
+
+        $('#tabs>.tab').on('drop', function(ev) {
+            if (!$(this).hasClass('new')) {
+                editor.dragTab(editor.draggingIndex, $(this).attr('index'));
+            }
+        });
     }
 
     // 新增标签
@@ -122,6 +144,28 @@ const editor = new function() {
             this.shift();
         }
         return this.tabs[this.currentIndex];
+    }
+
+    // 拖拽标签
+    this.dragTab = (a, b) => {
+        if (a == b) {
+            return;
+        }
+        let indexList = Object.keys(this.tabs);
+        let posA = indexList.indexOf(a);
+        let posB = indexList.indexOf(b);
+        let backup = this.tabs[a];
+        if (a < b) {
+            for (let i = posA; i < posB; i++) {
+                this.tabs[indexList[i]] = this.tabs[indexList[i + 1]];
+            }
+        } else {
+            for (let i = posA; i > posB; i--) {
+                this.tabs[indexList[i]] = this.tabs[indexList[i - 1]];
+            }
+        }
+        this.tabs[b] = backup;
+        this.currentTab(b);
     }
 
     // 获取文本
