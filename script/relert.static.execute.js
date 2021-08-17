@@ -19,6 +19,7 @@
                     let document = undefined;
                     let timeline = undefined;
                     let editor = undefined;
+                    let $ = undefined;
                     relert.tickProcess(() => {
                         try {
                             ${script}

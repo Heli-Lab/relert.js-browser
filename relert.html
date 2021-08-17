@@ -16,7 +16,6 @@
             </div>
             <div id="main">
                 <div id="topbar">
-                    <button id="topbar-btn-new" class="card">新建</button>
                     <button id="topbar-btn-open" class="card">打开</button>
                     <button id="topbar-btn-save" class="card">保存</button>
                     <label>文件名</label>
@@ -26,6 +25,7 @@
                     <button id="topbar-btn-help" class="card right">帮助</button>
                 </div>
                 <div id="content">
+                    <div id="tabs"></div>
                     <div id="editor"></div>
                     <div id="log-area">
                         <div id="log-box">
@@ -41,30 +41,15 @@
             </div>
         </div>
         <!-- 引入jQuery -->
-        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
         <!-- Editor 相关 -->
         <script src="https://cdn.bootcdn.net/ajax/libs/ace/test/ace.min.js"></script>
         <script src="https://cdn.bootcdn.net/ajax/libs/ace/test/mode-javascript.min.js"></script>
         <script>
-            // Editor 初始化
-            const __editor = ace.edit('editor');
-            __editor.setFontSize(14);
-            __editor.session.setMode('ace/mode/javascript');
-            __editor.session.setTabSize(4);
-            __editor.session.setUseSoftTabs(true);
-
             // 文件关联
             const $openJs = document.getElementById('openJs');
             $openJs.onchange = () => {
-                relert.log('Opening Script...');
-                if ($openJs.files[0]) {
-                    let fr = new FileReader();
-                    fr.onloadend = (e) => {
-                        __editor.setValue(e.target.result);
-                        relert.log('Done.');
-                    }
-                    fr.readAsText($openJs.files[0]);
-                }
+                editor.openFile($openJs.files[0]);
             }
 
             const $openMap = document.getElementById('openMap');
@@ -89,7 +74,7 @@
             });
 
             $('#topbar-btn-run').on('click', () => {
-                timeline.runScript(__editor.getValue(), 'noname.js');
+                timeline.runScript(editor.getText(), 'noname.js');
             });
 
             $('#topbar-btn-help').on('click', () => {

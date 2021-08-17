@@ -4,7 +4,9 @@
 :root {
     --topbar-height: 30px;
     --editor-height: 70vh;
+    --tab-height: 30px;
 
+    --color-lightergrey: #f0f0f0;
     --color-lightgrey: #DDD;
     --color-midgrey: #999;
     --color-darkgrey: #666;
@@ -18,6 +20,7 @@
 body {
     margin: 0;
     padding: 0;
+    min-width: 960px;
 }
 
 .container {
@@ -43,21 +46,34 @@ body {
     height: var(--topbar-height);
     background: var(--color-lightgrey);
     padding: 0 8px;
+    border-bottom: 8px solid var(--color-lightgrey);
 }
 
 #main #content {
     height: 100%;
 }
 
+#main #content #tabs {
+    height: var(--tab-height);
+    border-left: 8px solid var(--color-lightgrey);
+    border-right: 8px solid var(--color-lightgrey);
+    background: var(--color-lightgrey);
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    width: calc(100vw - 256px);
+}
+
 #main #content #editor {
     height: var(--editor-height);
     border: 8px solid var(--color-lightgrey);
+    border-top: none;
     box-sizing: border-box;
     width: 100%;
 }
 
 #main #content #log-area {
-    height: calc(100vh - var(--editor-height) - var(--topbar-height));
+    height: calc(100vh - var(--editor-height) - var(--topbar-height) - var(--tab-height) - 8px);
     width: 100%;
 }
 
@@ -71,9 +87,8 @@ body {
     width: 100%;
     border: 8px solid var(--color-lightgrey);
     border-top: none;
-    border-right: none;
     box-sizing: border-box;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     padding-right: 0;
 }
@@ -151,6 +166,98 @@ html {
 ::-webkit-scrollbar-track {
     background: var(--color-lightgrey);
 }
+
+/*** Tabs ***/
+
+#tabs {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+
+#tabs::-webkit-scrollbar {
+    display: none;
+}
+
+#tabs .tab {
+    display: inline-block;
+    position: relative;
+    background: var(--color-lightgrey);
+    color: var(--color-midgrey);
+    height: 100%;
+    line-height: calc(var(--tab-height) - 1px);
+    padding-left: 0.5em;
+    padding-right: 2em;
+    user-select: none;
+    font-size: 15px;
+    min-width: 10em;
+    cursor: pointer;
+    z-index: 100;
+    border: 1px solid var(--color-midgrey);
+}
+
+#tabs .tab .close {
+    position: absolute;
+    display: none;
+    padding: 0 8px;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    color: var(--color-darkgrey);
+}
+
+#tabs .tab .close:hover {
+    color: var(--color-red);
+}
+
+#tabs .tab:hover {
+    color: var(--color-darkgrey);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    z-index: 125;
+}
+
+#tabs .tab:hover .close {
+    display: block;
+}
+
+#tabs .tab.active {
+    font-weight: bold;
+    color: var(--color-main);
+    background: var(--color-lightergrey);
+    cursor: default;
+}
+
+#tabs .tab.active:hover {
+    background: var(--color-lightergrey);
+}
+
+#tabs .tab.active .close {
+    display: block;
+}
+
+#tabs .tab.new {
+    color: var(--color-font-light);
+    background: var(--color-main);
+    cursor: pointer;
+    min-width: 0;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    font-size: 18px;
+}
+
+#tabs .tab.new.magnetRight {
+    position: fixed;
+    right: 8px;
+    height: 28px;
+    z-index: 250;
+}
+
+#tabs .placeholder {
+    display: inline-block;
+    position: relative;
+    width: 30px;
+}
+
 
 /*** Log ***/
 
