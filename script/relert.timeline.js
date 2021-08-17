@@ -186,7 +186,7 @@ const timeline = new function() {
             data: relert.toString(),
             fileName: relert.fileName(),
             encoding: relert.encoding(),
-            log: `${this.snapshots[this.currentIndex].log.split('\n').slice(-this.maxLogHistory).join('\n')}\n执行脚本${scriptName}`,
+            log: `${this.snapshots[this.currentIndex].log.split('\n').slice(-this.maxLogHistory).join('\n')}\n执行脚本：${scriptName}`,
         });
         // 缓存快照
         this.localSnapshot();

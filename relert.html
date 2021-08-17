@@ -62,7 +62,7 @@
             // 左侧边栏
             $('#sidebar-btn-open').on('click', () => {
                 $openMap.click();
-            })
+            });
 
             // 顶栏
             $('#topbar-btn-open').on('click', () => {
@@ -74,7 +74,7 @@
             });
 
             $('#topbar-btn-run').on('click', () => {
-                timeline.runScript(editor.getText(), 'noname.js');
+                timeline.runScript(editor.getText(), editor.getFileName());
             });
 
             $('#topbar-btn-help').on('click', () => {

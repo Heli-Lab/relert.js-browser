@@ -53,7 +53,8 @@ const editor = new function() {
         });
 
         $('#tabs>.tab .close').on('click', function(e) {
-            if (confirm('确认关闭此标签页？请确保你需要的文件已经保存。')) {
+            if ((editor.tabs[$(this).parent().attr('index')].data.length == 0)
+                || confirm('确认关闭此标签页？请确保你需要的文件已经保存。')) {
                 editor.closeTab($(this).parent().attr('index'));
             }
             e.stopPropagation();
@@ -142,6 +143,8 @@ const editor = new function() {
             this.__editor.moveCursorTo(this.tabs[this.currentIndex].row, this.tabs[this.currentIndex].column);
             // 重绘
             this.shift();
+            // 焦点转移
+            this.__editor.focus();
         }
         return this.tabs[this.currentIndex];
     }
