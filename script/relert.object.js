@@ -13,6 +13,9 @@ const __RelertObject = function() {
 
     this.arrayLike = false;
     this.checkArray = () => {
+        if (this.parent.INI[this.register] == undefined) {
+            this.parent.INI[this.register] = {};
+        }
         if (this.arrayLike) {
             if (typeof this.parent.INI[this.register] == 'object') {
                 this.parent.INI[this.register] = Object.values(this.parent.INI[this.register])
@@ -121,7 +124,12 @@ const __RelertObject = function() {
             })
         } else if (typeof judge == 'object') {
             this.forEach((item) => {
-
+                for (let key in judge) {
+                    if (item[key] != judge[key]) {
+                        return;
+                    }
+                    item.delete();
+                }
             })
         }
     }
