@@ -151,6 +151,8 @@ const editor = new function() {
         if (a == b) {
             return;
         }
+        this.currentTab(a);
+        this.__editor.setValue('');
         let indexList = Object.keys(this.tabs);
         let posA = indexList.indexOf(a);
         let posB = indexList.indexOf(b);
