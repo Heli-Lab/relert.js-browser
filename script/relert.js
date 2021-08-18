@@ -31,12 +31,10 @@ const relert = new function() {
         'relert.tick',
 
         'relert.static',
-
         'relert.static.environment',
         'relert.static.gb2312',
         'relert.static.log',
         'relert.static.filesys',
-        'relert.static.execute',
         'relert.static.toolbox',
 
         'relert.object',
@@ -51,6 +49,7 @@ const relert = new function() {
     if (isBrowser) {
         enabled_modules.push('relert.timeline');
         enabled_modules.push('relert.editor');
+        enabled_modules.push('relert.sandbox');
     }
 
     // 加载模块

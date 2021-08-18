@@ -180,7 +180,7 @@ const timeline = new function() {
 
     // 2.执行脚本
     this.runScript = (script, scriptName) => {
-        relert.execute(script);
+        sandbox.execute(script, scriptName);
         // 产生快照
         this.currentIndex = this.addSnapshot({
             data: relert.toString(),
