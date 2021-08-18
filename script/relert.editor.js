@@ -226,6 +226,7 @@ const editor = new function() {
     this.__editor.session.setMode('ace/mode/javascript');
     this.__editor.session.setTabSize(4);
     this.__editor.session.setUseSoftTabs(true);
+    this.__editor.renderer.setOption('vScrollBarAlwaysVisible', true);
 
     // 标签栏鼠标滚轮横向滚动
     $('#tabs').on('wheel', (ev) => {

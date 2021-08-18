@@ -68,6 +68,7 @@ body {
     height: var(--editor-height);
     border: 8px solid var(--color-lightgrey);
     border-top: none;
+    border-right: none;
     box-sizing: border-box;
     width: 100%;
 }
@@ -87,8 +88,9 @@ body {
     width: 100%;
     border: 8px solid var(--color-lightgrey);
     border-top: none;
+    border-right: none;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     padding-right: 0;
 }
@@ -163,8 +165,13 @@ html {
     border-radius: 4px;
 }
 
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
     background: var(--color-lightgrey);
+}
+
+::-webkit-resizer {
+    display: none;
 }
 
 /*** Tabs ***/
