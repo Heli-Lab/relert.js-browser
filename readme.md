@@ -54,7 +54,7 @@
 `relert.js-browser`的用户界面总体分为左右两栏，而右侧有上下两个区域，它们的功能如此划分：
 
 * 左栏：**地图快照**列表。`relert.js-browser`用“快照”这一概念来管理地图在各个时刻的状态。你可以上传一张地图，分别执行多个脚本，生成多个“快照”，并随意在这些“快照”之间切换。
-* 右栏上半部分：**脚本编辑**区。这里有一个简单的文本编辑器界面，可以在这里查看并编写需要在地图上执行的`JavaScript`脚本。
+* 右栏上半部分：**脚本编辑**区。这里有一个简易的多标签文本编辑器界面，可以在这里查看并编写需要在地图上执行的`JavaScript`脚本。
 * 右栏下半部分：**调试信息**区。脚本执行时输出的调试信息、警告信息、报错信息都会显示在这个区域。
 
 #### HelloWorld
@@ -126,7 +126,7 @@ relert.Structure.forEach((structure) => {
 
 作为`relert.js`这个库的入口，我们提供了`relert`这一全局对象作为所有函数的挂载点。也就是说，我们调用`relert.js`的所有接口时，都以`relert.XXXX`的格式调用。
 
-`relert.Structure`提供了“建筑（Structure）”这一**数据代理**。数据代理这一概念在后面文档中会详细的讲，但在这里，你可以理解为我们通过`relert.Structure`来更加方便的操作建筑对象。
+`relert.Structure`提供了“建筑（Structure）”这一**数据代理**。数据代理这一概念在后面文档中会详细的讲，但在这里，你可以暂时理解为：我们通过`relert.Structure`这一接口，来更加方便直观的操作建筑对象。
 
 有了`relert.Structure`以后，我们可以通过`relert.Structure.forEach`函数这一**遍历器**来遍历所有的建筑。
 
@@ -180,7 +180,91 @@ relert.Structure.forEach((i) => {
 
 ### 直接操作INI
 
-`relert.js`会将整张地图的INI结构，转化为`Object`类型的数据对象，并通过`relert.INI`这一属性对外暴露。
+`relert.js`会将整张地图的`INI`结构，转化为`JavaScript Object`类型的数据对象，并通过`relert.INI`这一属性对外暴露。
+
+#### 结构
+
+`INI`文件格式是`[Section] key = value`的两层结构，转成`JavaScript Object`以后也是一个两层的结构，如同这样：
+
+```javascript
+{
+    Section: {
+        key: 'value',
+    },
+}
+```
+
+我们来举一个稍微复杂点的例子。
+
+比如说一段`INI`的结构是这样的：
+
+```ini
+[SectionA]
+keyA1 = valueA1
+keyA2 = valueA2
+
+[SectionB]
+keyB1 = valueB1
+keyB2 = valueB2
+```
+
+把它转化成`JavaScript Object`就是：
+
+```javascript
+{
+    SectionA : {
+        keyA1 : 'valueA1',
+        keyA2 : 'valueA2',
+    },
+    SectionB : {
+        keyB1 : 'valueB1',
+        keyB2 : 'valueB2',
+    },
+}
+```
+
+在这个例子中，我们在`relert.js`中想访问`SectionA`中的`keyA1`属性，可以这样写：
+
+```javascript
+relert.INI['SectionA']['keyA1']
+```
+
+对这个属性进行直接的取值或者赋值都是可以的。
+
+这就是对`INI`的直接操作。
+
+（**注意**：`relert.INI['SectionA']`**不一定存在**，有时候你的代码需要考虑它不存在、 即读取出来的值是`undefined`的情况，以避免程序出错）
+
+#### 多属性操作
+
+如果想要同时对多个属性进行操作，考虑使用`JavaScript`自带的原型方法`Object.assign(target: object, obj : object)`来进行。
+
+下面展示一个实用性的例子：
+
+```javascript
+// 本段程序作用：把列表中的平民单位的属性，都改为“可被自动攻击、生命值50点”
+
+// 需要修改属性的平民单位列表
+let civList = ['CIV1', 'CIV2', 'CIV3'];
+
+for (let i in civList) {
+    // 判断对应的平民单位字段是否存在
+    if (!relert.INI[civList[i]]) {
+        // 如果不存在就新建一个空的
+        relert.INI[civList[i]] = {};
+    }
+    // 使用Object.assign()将后面的对象合并入前面的relert.INI[civList[i]]
+    Object.assign(relert.INI[civList[i]], {
+        // 这样利用合并机制，可以同时修改多个属性
+        Insignificant: 'yes',
+        Strength: '50',
+    });
+}
+```
+
+#### 总结
+
+`relert.INI`提供了最基本的底层接口。其实它已经允许我们**直接修改地图相关的任何底层数据**（毕竟红色警戒2的地图本质上就是一个`INI`文件），但是这种修改方式只对修改内置`rules`显得比较友好，进行其它地图相关的操作就显得非常繁琐了——当然，`relert.js`一定会有让你满意的办法！这就要等后面章节慢慢介绍了。
 
 
 
@@ -188,13 +272,55 @@ relert.Structure.forEach((i) => {
 
 除了直接操作INI以外，你还可以通过<code>relert.js</code>抽象出的数据代理接口，以一种人类可读的方式，对一些在游戏中有明确意义的属性进行操作。
 
+为什么称之为“数据代理”呢？因为它只是对`relert.INI`的操作进行转化的**中间层**，并没有在`relert.INI`以外的地方存储额外的数据——这意味着，你对数据代理进行任何操作后，其背后的实际数据，`relert.INI`中的对应字段，也会进行实时的更新。
+
+数据代理的具体实现使用了`JavaScript`的`Proxy`对象：`Proxy`对象允许我们接管对一个对象所有的操作，包括对它属性的赋值等基础操作。比如，我们想要修改某座建筑物的生命值，通过数据代理，只需要做以下操作：
+
+* 通过在建筑列表的数据代理`relert.Structure`之中，（通过**索引**或者**遍历器**），找到这个具体建筑的数据代理`a`。
+* 直接把`a.Strength`赋值为你需要的值。
+
+这样就完成了“修改生命值”的过程。其余的操作，包括解析建筑数据的编码解码、导入INI等操作，`relert.js`提供的数据代理都会在内部帮你完成。
+
+接下来，本文档将按照大类，具体罗列`relert.js`中提供的所有数据代理。
+
 
 
 #### 物体 Object
 
-物体`Object`描述这样一类对象：它们被放在地图上的某个位置。即，每一个物体，都有明确的位置坐标`(X, Y)`。
+物体`Object`描述这样一类对象：它们被放在地图上的某个位置。即，每一个物体`Item`，都有明确的位置坐标`(X, Y)`。它们都可以被当成“坐标”传入需要输入坐标的函数接口。
+
+属于物体`Object`的对象有以下几类：
+
+| INI中的注册位置  | relert.js中的访问接口 | 描述     | $register属性 |
+| ---------------- | --------------------- | -------- | ------------- |
+| `Structure`      | `relert.Structure`    | 建筑物   |               |
+| `Infantry`       | `relert.Infantry`     | 步兵     |               |
+| `Units`          | `relert.Unit`         | 车辆单位 |               |
+| `Aircraft`       | `relert.Aircraft`     | 飞行器   |               |
+| `Terrain`        | `relert.Terrain`      | 地形对象 |               |
+| `Waypoint`       | `relert.Waypoint`     | 路径点   |               |
+| 各作战方注册表下 | `relert.BaseNode`     | 基地节点 |               |
+
+**注意**：覆盖物`Overlay`在地图中的存储方式有点特殊——它是以*覆盖整张地图的二维数据*进行存储的。因此在`relert.js`中，并没有把它归类于物体`Object`，而是归类于后面介绍的`MapData`类型。
+
+
 
 ##### 建筑 Structure
+
+建筑属性列表
+
+| 属性   | 描述         | 默认值     |
+| ------ | ------------ | ---------- |
+| `Type` | 建筑的注册名 | `'GAPOWR'` |
+|        |              |            |
+|        |              |            |
+|        |              |            |
+|        |              |            |
+|        |              |            |
+|        |              |            |
+|        |              |            |
+
+
 
 ##### 步兵 Infantry
 
@@ -210,9 +336,9 @@ relert.Structure.forEach((i) => {
 
 
 
-#### 地表 Landscape
+#### 地表数据 MapData
 
-地表`Landscape`描述这样一类对象：它由覆盖整张地图的二维数据组成。
+地表`MapData`描述这样一类对象：它由覆盖整张地图的二维数据组成。
 
 ##### 地形 MapPack
 
@@ -317,7 +443,7 @@ Time Limit Exceeded: [3000.100000023842ms > 3000ms]
 为此，`relert.Static.Tick`提供了一个挂载在全局对象`relert`的接口：
 
 ```javascript
-relert.tickTimeOut = function(timeOut: number): number;
+relert.tickTimeOut(timeOut: number): number;
 ```
 
 接收数值类型输入，并返回一个数值，其含义均代表当前`relert.Static.Tick`模块的全局等待时间，单位为毫秒。
@@ -416,7 +542,7 @@ relert.tickProcess(process: function, [processId: any, timeOut: number]);
 ```
 
 * `process`：必需，被监听的函数；
-* `processId`：监听任务的唯一ID，用于区分不同的监听起点与等待时间。具体是什么值无所谓，只要唯一即可。缺省值为全局监听ID `Symbol`。
+* `processId`：监听任务的唯一ID，用于区分不同的监听起点与等待时间。具体是什么值无所谓，只要**唯一**且**对应**即可。缺省值为全局监听ID `Symbol`。
 * `timeOut`：监听任务的等待时间，单位为毫秒。缺省值为全局等待时间（即`relert.tickTimeOut()`的返回值）。
 
 而我们的“打点”操作`relert.tick()`函数除了可以无参数调用以表示全局打点以外，它也可以有自己的参数和返回值：
@@ -548,7 +674,7 @@ relert.cls();
 
 `relert.Static.Log`模块在浏览器中运行时，其内部做了缓存操作。这使得一瞬间连续输出几十万条信息，也不会直接让浏览器崩溃（虽然这仍然是很不好的习惯）。
 
-使用`relert.log`代替`console.log`的一个好处是，脚本在浏览器端的行为和在`node.js`端的行为被统一了起来，使得我们更容易写出能在两个环境下通用的脚本。
+使用`relert.log`代替`console.log`的一个另好处是，脚本在浏览器端的行为和在`node.js`端的行为被统一了起来，使得我们更容易写出能在两个环境下通用的脚本。
 
 
 
@@ -593,6 +719,16 @@ relert.execute(script: string);
 ```
 
 * `script`：一段字符串形式的`JavaScript`代码。这段代码会在沙盒中执行。
+
+#### 异常处理行为
+
+
+
+### 注册号 RegKey
+
+该模块提供了几种不同格式的注册号生成函数，可以自动生成地图中没有使用过的注册号。
+
+
 
 
 
@@ -690,13 +826,21 @@ relert.posInnerTriangle(obj1: object, obj2: object, obj3: object): boolean;
 
 
 
-## 时光机
+## 时光机 Timeline
 
-计划开发内容。
+时光机`relert.Timeline`是一个独立的、浏览器端独有的模块。
+
+### 快照
+
+### 状态加载
+
+
 
 
 
 ## 在node.js环境使用
+
+`relert.js`最早是一个基于`node.js`的脚本库。在移植到浏览器端以后，在兼容处理下，它仍然能够无缝的在`node.js`环境中使用。
 
 ### 程序入口
 
@@ -704,11 +848,13 @@ relert.posInnerTriangle(obj1: object, obj2: object, obj3: object): boolean;
 
 ### 通用脚本编写
 
+本章讨论如何使用`relert.js`写出在浏览器和`node.js`中**都可以正常发挥作用**的地图脚本。
 
 
-## 定制
 
+## 定制开发
 
+本章讨论`relert.js-browser`在浏览器端的定制开发问题——比如说，我想要丢弃原有的`index.html`，重新开发一个网页客户端，需要做什么呢？
 
 ## 关于
 
