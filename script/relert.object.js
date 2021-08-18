@@ -12,6 +12,7 @@ const __RelertObject = function() {
     this.parent = undefined;
 
     this.arrayLike = false;
+    this.iteratorCount = 0;
     this.checkArray = () => {
         if (this.parent.INI[this.register] == undefined) {
             this.parent.INI[this.register] = {};
@@ -37,6 +38,12 @@ const __RelertObject = function() {
                 return obj.parent.INI[obj.register].length;
             } else if (obj.parent.INI[obj.register][key]) {
                 return obj.getInterface(key);
+            }
+        },
+        deleteProperty: (obj, key) => {
+            if (obj.parent.INI[obj.register][key]) {
+                obj.getInterface(key).delete();
+                return true;
             }
         },
         set: (obj, key, value) => {
@@ -76,6 +83,13 @@ const __RelertObject = function() {
                     return obj.getData().split(',')[this.parameters.indexOf(key)];
                 } else if (key == '$register') {
                     return this.register;
+                } else if (key == 'delete') {
+                    return () => {
+                        delete this.parent.INI[this.register][index];
+                        if (this.arrayLike && (this.iteratorCount == 0)) {
+                            this.parent.INI[this.register].splice(index, 1);
+                        }
+                    }
                 }
             },
             set: (obj, key, value) => {
@@ -85,19 +99,36 @@ const __RelertObject = function() {
                     obj.setData(params.join(','));
                     return true;
                 }
-            }
+            },
         });
     }
 
     this.forEach = (callback) => {
-        for (index in this.parent.INI[this.register]) {
-            callback(this.getInterface(index), index);
+        this.iteratorCount ++;
+        try {
+            for (index in this.parent.INI[this.register]) {
+                if (this.parent.INI[this.register][index]) {
+                    callback(this.getInterface(index), index);
+                }
+            }
+        } catch(e) {
+            throw(e);
+        } finally {
+            this.iteratorCount --;
+        }
+        if (this.arrayLike) {
+            this.parent.INI[this.register] = this.parent.INI[this.register].filter(Boolean);
         }
     }
 
     this[Symbol.iterator] = function*() {
         for (index in this.parent.INI[this.register]) {
-            yield this.getInterface(index);
+            if (this.parent.INI[this.register][index]) {
+                yield this.getInterface(index);
+            }
+        }
+        if (this.arrayLike) {
+            this.parent.INI[this.register] = this.parent.INI[this.register].filter(Boolean);
         }
     }.bind(this);
 
@@ -121,7 +152,7 @@ const __RelertObject = function() {
                 if (judge(item)) {
                     item.delete();
                 }
-            })
+            });
         } else if (typeof judge == 'object') {
             this.forEach((item) => {
                 for (let key in judge) {
@@ -130,7 +161,7 @@ const __RelertObject = function() {
                     }
                     item.delete();
                 }
-            })
+            });
         }
     }
 
