@@ -12,7 +12,6 @@ const __RelertObject = function() {
     this.parent = undefined;
 
     this.arrayLike = false;
-    this.iteratorCount = 0;
     this.checkArray = () => {
         if (this.parent.INI[this.register] == undefined) {
             this.parent.INI[this.register] = {};
@@ -86,7 +85,7 @@ const __RelertObject = function() {
                 } else if (key == 'delete') {
                     return () => {
                         delete this.parent.INI[this.register][index];
-                        if (this.arrayLike && (this.iteratorCount == 0)) {
+                        if (this.arrayLike) {
                             this.parent.INI[this.register].splice(index, 1);
                         }
                     }
@@ -104,31 +103,22 @@ const __RelertObject = function() {
     }
 
     this.forEach = (callback) => {
-        this.iteratorCount ++;
-        try {
-            for (index in this.parent.INI[this.register]) {
-                if (this.parent.INI[this.register][index]) {
-                    callback(this.getInterface(index), index);
-                }
-            }
-        } catch(e) {
-            throw(e);
-        } finally {
-            this.iteratorCount --;
-        }
-        if (this.arrayLike) {
-            this.parent.INI[this.register] = this.parent.INI[this.register].filter(Boolean);
+        let lastItem = null;
+        for (index in this.parent.INI[this.register]) {
+            do {
+                lastItem = this.parent.INI[this.register][index];
+                callback(this.getInterface(index), index);
+            } while (!(lastItem == this.parent.INI[this.register][index]));
         }
     }
 
     this[Symbol.iterator] = function*() {
+        let lastItem = null;
         for (index in this.parent.INI[this.register]) {
-            if (this.parent.INI[this.register][index]) {
+            do {
+                lastItem = this.parent.INI[this.register][index];
                 yield this.getInterface(index);
-            }
-        }
-        if (this.arrayLike) {
-            this.parent.INI[this.register] = this.parent.INI[this.register].filter(Boolean);
+            } while (!(lastItem == this.parent.INI[this.register][index]))
         }
     }.bind(this);
 
