@@ -3,7 +3,7 @@
  * relert.js 车辆代理层
  **********************************/
 
-const __Unit = new function() {
+const __Unit = function() {
     if (typeof __RelertObject == 'function') {
         __RelertObject.call(this);
     } else {
@@ -47,7 +47,9 @@ const __Unit = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Unit.mount(relert);
+    new __Unit().mount(relert);
 } else {
-    module.exports = __Unit.mount;
+    module.exports = (parent) => {
+        new __Unit().mount(parent);
+    }
 }

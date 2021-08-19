@@ -101,6 +101,8 @@ if ((typeof window == 'object') && (this === window)) {
     __Log.dom = document.getElementById('log');
     __Log.domParent = document.getElementById('log-box');
 } else {
-    module.exports = __Log.mount;
+    module.exports = (parent) => {
+        __Log.mount(parent);
+    }
 }
 

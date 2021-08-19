@@ -5,7 +5,7 @@
 
 globalThis = this;
 
-const __GB2312 = new function() {
+const __GB2312 = function() {
     if (typeof __RelertStatic == 'function') {
         __RelertStatic.call(this);
     } else {
@@ -67,7 +67,9 @@ const __GB2312 = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __GB2312.mount(relert);
+    new __GB2312().mount(relert);
 } else {
-    module.exports = __GB2312.mount;
+    module.exports = (parent) => {
+        new __GB2312().mount(parent);
+    }
 }

@@ -3,7 +3,7 @@
  * relert.js 静态函数工具箱
  **********************************/
 
-const __Toolbox = new function() {
+const __Toolbox = function() {
     if (typeof __RelertStatic == 'function') {
         __RelertStatic.call(this);
     } else {
@@ -26,7 +26,9 @@ const __Toolbox = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Toolbox.mount(relert);
+    new __Toolbox().mount(relert);
 } else {
-    module.exports = __Toolbox.mount;
+    module.exports = (parent) => {
+        new __Toolbox().mount(parent);
+    }
 }

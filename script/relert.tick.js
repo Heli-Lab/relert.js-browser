@@ -3,7 +3,7 @@
  * relert.js 打点计时器
  **********************************/
 
-const __Tick = new function() {
+const __Tick = function() {
     this.entrance = '';
     this.mount = (parent) => {
         for (let func in this.exports) {
@@ -105,7 +105,9 @@ const __Tick = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Tick.mount(relert);
+    new __Tick().mount(relert);
 } else {
-    module.exports = __Tick.mount;
+    module.exports = (parent) => {
+        new __Tick().mount(parent);
+    }
 }

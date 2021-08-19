@@ -5,7 +5,7 @@
 
 globalThis = this;
 
-const relert = new function() {
+const __Relert = function() {
 
     this.INI = {};
 
@@ -59,6 +59,9 @@ const relert = new function() {
 }
 
 if ((typeof window == 'undefined') || !(this === window)) {
-    module.exports = relert;
+    module.exports = () => {
+        return new __Relert();
+    }
+} else {
+    relert = new __Relert();
 }
-

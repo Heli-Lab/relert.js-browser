@@ -5,7 +5,7 @@
 
 globalThis = this;
 
-const __FileSys = new function() {
+const __FileSys = function() {
     if (typeof __RelertStatic == 'function') {
         __RelertStatic.call(this);
     } else {
@@ -147,7 +147,9 @@ const __FileSys = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __FileSys.mount(relert);
+    new __FileSys().mount(relert);
 } else {
-    module.exports = __FileSys.mount;
+    module.exports = (parent) => {
+        new __FileSys().mount(parent);
+    }
 }

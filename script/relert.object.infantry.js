@@ -3,7 +3,7 @@
  * relert.js 步兵代理层
  **********************************/
 
-const __Infantry = new function() {
+const __Infantry = function() {
     if (typeof __RelertObject == 'function') {
         __RelertObject.call(this);
     } else {
@@ -47,7 +47,9 @@ const __Infantry = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Infantry.mount(relert);
+    new __Infantry().mount(relert);
 } else {
-    module.exports = __Infantry.mount;
+    module.exports = (parent) => {
+        new __Infantry().mount(parent);
+    }
 }

@@ -5,7 +5,7 @@
 
 globalThis = this;
 
-const __Environment = new function() {
+const __Environment = function() {
     if (typeof __RelertStatic == 'function') {
         __RelertStatic.call(this);
     } else {
@@ -21,7 +21,9 @@ const __Environment = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Environment.mount(relert);
+    new __Environment().mount(relert);
 } else {
-    module.exports = __Environment.mount;
+    module.exports = (parent) => {
+        new __Environment().mount(parent);
+    }
 }

@@ -3,7 +3,7 @@
  * relert.js 飞行器代理层
  **********************************/
 
-const __Aircraft = new function() {
+const __Aircraft = function() {
     if (typeof __RelertObject == 'function') {
         __RelertObject.call(this);
     } else {
@@ -43,7 +43,9 @@ const __Aircraft = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Aircraft.mount(relert);
+    new __Aircraft().mount(relert);
 } else {
-    module.exports = __Aircraft.mount;
+    module.exports = (parent) => {
+        new __Aircraft().mount(parent);
+    }
 }

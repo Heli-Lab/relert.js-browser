@@ -3,7 +3,7 @@
  * relert.js 建筑代理层
  **********************************/
 
-const __Structure = new function() {
+const __Structure = function() {
     if (typeof __RelertObject == 'function') {
         __RelertObject.call(this);
     } else {
@@ -53,7 +53,9 @@ const __Structure = new function() {
 }
 
 if ((typeof window == 'object') && (this === window)) {
-    __Structure.mount(relert);
+    new __Structure().mount(relert);
 } else {
-    module.exports = __Structure.mount;
+    module.exports = (parent) => {
+        new __Structure().mount(parent);
+    }
 }
