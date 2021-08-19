@@ -79,7 +79,9 @@ const __RelertObject = function() {
         }, {
             get: (obj, key) => {
                 if (this.parameters.indexOf(key) >= 0) {
-                    return obj.getData().split(',')[this.parameters.indexOf(key)];
+                    if (obj.getData()) {
+                        return obj.getData().split(',')[this.parameters.indexOf(key)];
+                    }
                 } else if (key == '$register') {
                     return this.register;
                 } else if (key == 'delete') {
