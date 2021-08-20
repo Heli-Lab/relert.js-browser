@@ -181,15 +181,17 @@ const timeline = new function() {
     // 2.执行脚本
     this.runScript = (script, scriptName) => {
         sandbox.execute(script, scriptName);
-        // 产生快照
-        this.currentIndex = this.addSnapshot({
-            data: relert.toString(),
-            fileName: relert.fileName(),
-            encoding: relert.encoding(),
-            log: `${this.snapshots[this.currentIndex].log.split('\n').slice(-this.maxLogHistory).join('\n')}\n执行脚本：${scriptName}`,
-        });
-        // 缓存快照
-        this.localSnapshot();
+        if (this.currentIndex > 0) {
+            // 产生快照
+            this.currentIndex = this.addSnapshot({
+                data: relert.toString(),
+                fileName: relert.fileName(),
+                encoding: relert.encoding(),
+                log: `${this.snapshots[this.currentIndex].log.split('\n').slice(-this.maxLogHistory).join('\n')}\n执行脚本：${scriptName}`,
+            });
+            // 缓存快照
+            this.localSnapshot();
+        }
     }
 
     // 3.从缓存恢复
