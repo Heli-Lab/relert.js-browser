@@ -87,8 +87,6 @@ const __FileSys = function() {
         if (this.isNode) {
             // Node环境下，使用fs接口
             require('fs').writeFileSync(fileName, content);
-            this.parent.tickEnd();
-            this.parent.tickStart();
         } else {
             // 浏览器环境下，创建一个下载文件任务
             var downloadDOM = document.createElement('a');
@@ -117,12 +115,10 @@ const __FileSys = function() {
         this.load = (fileName) => {
             this.savedFileName = fileName;
             this.loadBuffer(require('fs').readFileSync(this.savedFileName));
-            this.parent.tickStart();
         }
 
         // 挂载以后
         this.mounted = () => {
-            this.parent.tickStart();
             // 读取命令行参数
             this.args = require('process').argv;
             if (this.args[2]) {
