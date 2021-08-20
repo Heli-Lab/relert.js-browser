@@ -19,10 +19,26 @@ const sandbox = new function() {
                     eval(`${script}
                     \/\/# sourceURL=${scriptName}`);
                 } catch (err) {
-                    let errorStack = String(err.stack);
-                    errorStack = errorStack.substring(0, errorStack.indexOf('sandbox'));
-                    errorStack = errorStack.substring(0, errorStack.lastIndexOf('\n'));
-                    relert.error(`${err.message} - ${errorStack}`);
+                    let errorMessage = (err) => {
+                        let stack = ErrorStackParser.parse(err);
+                        let msg = err.message;
+                        let evalBegin = false;
+                        for (let i in stack) {
+                            if ((stack[i].functionName == 'eval') || (stack[i].fileName == scriptName)) {
+                                if (!evalBegin) {
+                                    evalBegin = true;
+                                }
+                                msg += `\n        at ${scriptName} (row ${stack[i].lineNumber}, col ${stack[i].columnNumber})`;
+                            } else {
+                                if (evalBegin) {
+                                    break;
+                                }
+                                msg += `\n        at ${stack[i].fileName} - ${stack[i].functionName} (row ${stack[i].lineNumber}, col ${stack[i].columnNumber})`;
+                            }
+                        }
+                        return msg;
+                    }
+                    relert.error(errorMessage(err));
                     throw(err);
                 }
             });

@@ -22,7 +22,7 @@
 
 ### 运行需求
 
-`relert.js-browser`通过网页加载的方式运行。
+`relert.js-browser`主要通过网页加载的方式运行。
 
 需要浏览器支持**ECMAScript6**标准和一些比较新的特性，具体版本为：
 - **Chrome** 71 版本及以上
@@ -38,6 +38,8 @@
 当然除了`relert.js-browser`框架本身的运行需求以外，用户编写出来的的脚本也有自己的运行需求——如果你使用了更加激进的新特性来编写脚本，那么使用的范围就会更窄。
 
 不过，鉴于`relert.js-browser`是一件有效的生产力工具，没有必要牺牲开发的便捷度而去追求对远古浏览器的兼容性，还是请诸位mapper把自己的浏览器升级到最新版为宜。
+
+除了浏览器之外，你还可以通过`node.js`加载`relert.js`，以纯命令行的方式执行。
 
 
 
@@ -270,7 +272,7 @@ for (let i in civList) {
 
 ### 数据代理
 
-除了直接操作INI以外，你还可以通过<code>relert.js</code>抽象出的数据代理接口，以一种人类可读的方式，对一些在游戏中有明确意义的属性进行操作。
+除了直接操作INI以外，你还可以通过<code>relert.js</code>抽象出的**数据代理**接口，以一种人类可读的方式，对一些在游戏中有明确意义的属性进行操作。
 
 为什么称之为“数据代理”呢？因为它只是对`relert.INI`的操作进行转化的**中间层**，并没有在`relert.INI`以外的地方存储额外的数据——这意味着，你对数据代理进行任何操作后，其背后的实际数据，`relert.INI`中的对应字段，也会进行实时的更新。
 
@@ -287,21 +289,24 @@ for (let i in civList) {
 
 #### 物体 Object
 
-物体`Object`描述这样一类对象：它们被放在地图上的某个位置。即，每一个物体`Item`，都有明确的位置坐标`(X, Y)`。它们都可以被当成“坐标”传入需要输入坐标的函数接口。
+物体`Object`描述这样一类对象：它们被放在地图上的某个位置。即，每一个物体`Item`，都有明确的位置坐标`(X, Y)`，对应属性`Item.X`和`Item.Y`。
+
+由于它们都可以被当成“坐标”，传入需要输入坐标的函数接口。
 
 属于物体`Object`的对象有以下几类：
 
-| INI中的注册位置  | relert.js中的访问接口 | 描述     | $register属性 |
-| ---------------- | --------------------- | -------- | ------------- |
-| `Structure`      | `relert.Structure`    | 建筑物   |               |
-| `Infantry`       | `relert.Infantry`     | 步兵     |               |
-| `Units`          | `relert.Unit`         | 车辆单位 |               |
-| `Aircraft`       | `relert.Aircraft`     | 飞行器   |               |
-| `Terrain`        | `relert.Terrain`      | 地形对象 |               |
-| `Waypoint`       | `relert.Waypoint`     | 路径点   |               |
-| 各作战方注册表下 | `relert.BaseNode`     | 基地节点 |               |
+| INI中的注册位置  | relert.js中的访问接口 | 描述     |
+| ---------------- | --------------------- | -------- |
+| `Structure`      | `relert.Structure`    | 建筑物   |
+| `Infantry`       | `relert.Infantry`     | 步兵     |
+| `Units`          | `relert.Unit`         | 车辆单位 |
+| `Aircraft`       | `relert.Aircraft`     | 飞行器   |
+| `Terrain`        | `relert.Terrain`      | 地形对象 |
+| `Smudges`        | `relert.Smudge`       | 污染     |
+| `Waypoint`       | `relert.Waypoint`     | 路径点   |
+| 各作战方注册表下 | `relert.BaseNode`     | 基地节点 |
 
-**注意**：覆盖物`Overlay`在地图中的存储方式有点特殊——它是以*覆盖整张地图的二维数据*进行存储的。因此在`relert.js`中，并没有把它归类于物体`Object`，而是归类于后面介绍的`MapData`类型。
+**注意**：覆盖物`Overlay`在地图中的存储方式有点特殊——它是以*Base64编码的二维数据*进行存储的。因此在`relert.js`中，并没有把它归类于物体`Object`，而是归类于后面介绍的`MapData`类型。
 
 
 
@@ -330,6 +335,8 @@ for (let i in civList) {
 
 ##### 地形对象 Terrain
 
+##### 污染 Smudge
+
 ##### 路径点 Waypoint
 
 ##### 基地节点 BaseNode
@@ -338,7 +345,7 @@ for (let i in civList) {
 
 #### 地表数据 MapData
 
-地表`MapData`描述这样一类对象：它由覆盖整张地图的二维数据组成。
+地表`MapData`描述这样一类对象：它由覆盖整张地图的Base64编码数据组成。
 
 ##### 地形 MapPack
 
@@ -378,9 +385,11 @@ for (let i in civList) {
 
 
 
-## 静态模块 Static
+## 静态模块
 
 “静态模块”指没有自己独立入口的模块，它们在被导入以后，会在全局对象`relert`上直接附加一些属性或者方法。
+
+静态模块都由`relert.Static`类继承而来。
 
 
 
@@ -409,7 +418,7 @@ for (let i in civList) {
 
 #### 基本使用方法
 
-在`relert.js`的环境下，一般来说，不用你做任何事情，`relert.Static.Tick`模块就已经在保护你的主线程了。
+在`relert.js-browser`的环境下，一般来说，不用你做任何事情，`relert.Static.Tick`模块就已经在保护你的主线程了。
 
 在一张地图上尝试以下脚本：
 
@@ -632,9 +641,7 @@ try {
 
 `node.js`环境下的`relert.Static.Tick`模块的行为和在浏览器中行为稍有不同。
 
-`relert.js`在被`require`引入以后，如果加载了文件，就会自动启动全局的`relert.tickStart()`。如果文件是事后手动加载的，也会在文件加载的时候执行。
-
-而在执行保存文件以后，会立刻执行全局的`relert.tickEnd()`，但立刻启动下一个全局`relert.tickStart()`。
+在`node.js`下。`relert.Static.Tick`不会自动启动全局的监听，需要手动执行`relert.tickStart()`来开启监听。毕竟`node.js`下不存在崩掉整个工作区的问题，即便是出现了死循环也可以通过`Ctrl+C`组合键来打断。另外，默认关闭也方便了在`node.js`的交互式执行界面进行操作——如果监听开着，那么你每敲入一行代码，都会产生超时异常！
 
 
 
@@ -806,13 +813,17 @@ relert.posInnerTriangle(obj1: object, obj2: object, obj3: object): boolean;
 
 
 
-## 时光机 Timeline
+## 浏览器环境模块
 
-时光机`relert.Timeline`是一个独立的、浏览器端独有的模块。
+### 时光机 Timeline
 
-### 快照
 
-### 状态加载
+
+### 编辑器 Editor
+
+
+
+### 运行时沙盒 Sandbox
 
 
 
@@ -820,15 +831,68 @@ relert.posInnerTriangle(obj1: object, obj2: object, obj3: object): boolean;
 
 ## 在node.js环境使用
 
-`relert.js`最早是一个基于`node.js`的脚本库。在移植到浏览器端以后，在兼容处理下，它仍然能够无缝的在`node.js`环境中使用。
+`relert.js`最早是一个基于`node.js`的脚本库。在移植到浏览器端以后，在合适的兼容处理下，它仍然能够无缝的在`node.js`环境中使用。
+
+
 
 ### 程序入口
 
+在浏览器环境中，浏览器已经自动在环境中生成了一个`relert`对象。但在`node.js`环境中我们无法预先指定运行环境上下文，故需要自己在脚本中引入`relert`对象。
+
+首先通过`require`语句，从`relert.js`中获取用于创建`relert`对象工厂函数，然后再调用这个函数：
+
+```javascript
+const relertCreater = require('./script/relert.js'); //应为relert.js存储的位置
+const relert = relertCreater();
+```
+
+这样我们就获取了一个和浏览器端几乎完全一致的`relert`对象，可以使用它上面的各种方法。
+
+以上两条语句也可以合并为一条（注意`require`语句末尾多了一个空括号）：
+
+```javascript
+const relert = require('./script/relert.js')();
+```
+
+当然，你也可以给`relert`全局对象换个名字，接口也会发生相应的改变。下文如不特殊说明，仍默认全局对象的命名仍然是`relert`。
+
+
+
 ### 文件接口
+
+在浏览器环境中，我们执行脚本的直接作用对象是**快照**；而在`node.js`环境下，没有这个东西。
+
+但是鉴于`node.js`有对文件系统的完全访问权限，我们写在`node.js`中的脚本，可以**直接读写本地文件**——这不比快照更好用？
+
+首先，这带来的好处就是，`relert.js`在`node.js`端所有和“文件名”有关的接口，其“文件名”都可以指定为“文件路径”，即直接指向本地的某个文件。
+
+其次，在`node.js`端还多了一个可以直接使用的文件读取接口：
+
+```javascript
+relert.load(filename: string);
+```
+
+指定一个文件，将其读取并加载入`relert`实例。
+
+
 
 ### 通用脚本编写
 
 本章讨论如何使用`relert.js`写出在浏览器和`node.js`中**都可以正常发挥作用**的地图脚本。
+
+#### 判断入口
+
+#### 文件读写
+
+#### 环境差异
+
+#### 使用relert.log
+
+
+
+### 多个relert.js实例
+
+
 
 
 

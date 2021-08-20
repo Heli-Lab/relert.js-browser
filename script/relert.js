@@ -14,15 +14,33 @@ const __Relert = function() {
     let jsFolder = 'script';
 
     // 动态加载模块
-    let __loadModule = (path) => {
+    let __loadModule = (path, callback) => {
+        if (!path) {
+            return;
+        }
         if (isBrowser) {
             var scriptDOM = document.createElement('script');
             scriptDOM.type = 'text/javascript';
             scriptDOM.src = './' + jsFolder + '/' + path + '.js';
+            scriptDOM.onload = () => {
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
             document.getElementsByTagName('body')[0].appendChild(scriptDOM); 
         }
         if (isNode) {
             require('./' + path + '.js')(this);
+            if (typeof callback == 'function') {
+                callback();
+            }
+        }
+    }
+
+    // 确保加载的顺序
+    let __loadModules = () => {
+        if (enabled_modules.length > 0) {
+            __loadModule(enabled_modules.shift(), __loadModules);
         }
     }
 
@@ -53,9 +71,7 @@ const __Relert = function() {
     }
 
     // 加载模块
-    enabled_modules.forEach((relert_module) => {
-        __loadModule(relert_module);
-    });
+    __loadModules();
 }
 
 if ((typeof window == 'undefined') || !(this === window)) {

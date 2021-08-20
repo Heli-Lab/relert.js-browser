@@ -114,7 +114,7 @@ const __FileSys = function() {
     if (this.isNode) {
 
         // 直接读取文件
-        this.loadFile = (fileName) => {
+        this.load = (fileName) => {
             this.savedFileName = fileName;
             this.loadBuffer(require('fs').readFileSync(this.savedFileName));
             this.parent.tickStart();
@@ -127,7 +127,7 @@ const __FileSys = function() {
             this.args = require('process').argv;
             if (this.args[2]) {
                 this.savedFileName = this.args[2];
-                this.loadFile(this.savedFileName);
+                this.load(this.savedFileName);
             }
         }
     }
@@ -137,7 +137,7 @@ const __FileSys = function() {
         INIToString: this.INIToString,
         loadBuffer: this.loadBuffer,
         loadString: this.loadString,
-        loadFile: this.loadFile,
+        load: this.load,
         toBuffer: this.toBuffer,
         toString: this.toString,
         save: this.save,
