@@ -247,7 +247,7 @@ relert.INI['SectionA']['keyA1']
 // 本段程序作用：把列表中的平民单位的属性，都改为“可被自动攻击、生命值50点”
 
 // 需要修改属性的平民单位列表
-let civList = ['CIV1', 'CIV2', 'CIV3'];
+let civList = ['CIV1', 'CIV2', 'CIV3', 'CIVA', 'CIVB', 'CIVC'];
 
 for (let i in civList) {
     // 判断对应的平民单位字段是否存在
@@ -291,7 +291,7 @@ for (let i in civList) {
 
 物体`Object`描述这样一类对象：它们被放在地图上的某个位置。即，每一个物体`Item`，都有明确的位置坐标`(X, Y)`，对应属性`Item.X`和`Item.Y`。
 
-由于它们都可以被当成“坐标”，传入需要输入坐标的函数接口。
+由于它们都具有`X`和`Y`属性，因此它们都可以被当成“坐标”，传入需要输入坐标的函数接口。
 
 属于物体`Object`的对象有以下几类：
 
@@ -302,11 +302,18 @@ for (let i in civList) {
 | `Units`          | `relert.Unit`         | 车辆单位 |
 | `Aircraft`       | `relert.Aircraft`     | 飞行器   |
 | `Terrain`        | `relert.Terrain`      | 地形对象 |
-| `Smudges`        | `relert.Smudge`       | 污染     |
+| `Smudge`         | `relert.Smudge`       | 污染     |
 | `Waypoint`       | `relert.Waypoint`     | 路径点   |
 | 各作战方注册表下 | `relert.BaseNode`     | 基地节点 |
+| `CellTags`       | `relert.CellTag`      | 单元标记 |
 
 **注意**：覆盖物`Overlay`在地图中的存储方式有点特殊——它是以*Base64编码的二维数据*进行存储的。因此在`relert.js`中，并没有把它归类于物体`Object`，而是归类于后面介绍的`MapData`类型。
+
+
+
+##### 公共操作
+
+
 
 
 
@@ -336,6 +343,17 @@ for (let i in civList) {
 ##### 地形对象 Terrain
 
 ##### 污染 Smudge
+
+
+
+| 属性     | 描述                              | 默认值       |
+| -------- | --------------------------------- | ------------ |
+| `Type`   | 污染的注册名                      | `'CRATER01'` |
+| `X`      | 污染的`x`坐标                     | `'0'`        |
+| `Y`      | 污染的`y`坐标                     | `'0'`        |
+| `Ignore` | 是否被忽略（填非0的值都会被忽略） | `'0'`        |
+
+
 
 ##### 路径点 Waypoint
 

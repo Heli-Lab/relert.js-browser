@@ -60,6 +60,7 @@ const __Relert = function() {
         'relert.object.infantry',
         'relert.object.unit',
         'relert.object.aircraft',
+        'relert.object.smudge',
 
     ];
 
