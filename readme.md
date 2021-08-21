@@ -1,4 +1,4 @@
-# relert.js-browser 0.1 说明文档（2021.8.16未完成）
+# relert.js-browser 0.1 说明文档（2021.8.20未完成）
 
 ## 简介
 
@@ -415,10 +415,10 @@ for (let i in civList) {
 
 环境变量模块`relert.Static.Environment`导出了几个非常基本的纯静态属性：
 
-* `relert.isNode: boolean`：当前脚本是否在`node.js`下运行。
+* `relert.isNode: Boolean`：当前脚本是否在`node.js`下运行。
 
-* `relert.isBrowser: boolean`：当前脚本是否在浏览器下运行。
-* `relert.version: float`：当前`relert.js`的版本号。
+* `relert.isBrowser: Boolean`：当前脚本是否在浏览器下运行。
+* `relert.version: Float`：当前`relert.js`的版本号。
 
 需要时直接使用即可，没什么好说的。
 
@@ -470,7 +470,7 @@ Time Limit Exceeded: [3000.100000023842ms > 3000ms]
 为此，`relert.Static.Tick`提供了一个挂载在全局对象`relert`的接口：
 
 ```javascript
-relert.tickTimeOut(timeOut: number): number;
+relert.tickTimeOut(timeOut: Number): Number;
 ```
 
 接收数值类型输入，并返回一个数值，其含义均代表当前`relert.Static.Tick`模块的全局等待时间，单位为毫秒。
@@ -565,7 +565,7 @@ relert.log(`Steps: ${collatz(180352746940718527, 0)}`);
 `relert.Static.Tick`模块提供了这样的一个静态函数入口：
 
 ```javascript
-relert.tickProcess(process: function, [processId: any, timeOut: number]);
+relert.tickProcess(process: Function, [processId: Any, timeOut: Number]);
 ```
 
 * `process`：必需，被监听的函数；
@@ -575,7 +575,7 @@ relert.tickProcess(process: function, [processId: any, timeOut: number]);
 而我们的“打点”操作`relert.tick()`函数除了可以无参数调用以表示全局打点以外，它也可以有自己的参数和返回值：
 
 ```javascript
-relert.tick([processId: any]): number;
+relert.tick([processId: Any]): number;
 ```
 
 * `processId`：监听任务的唯一ID，与`relert.tickProcess()`的参数对应。缺省值为全局监听ID。
@@ -618,8 +618,8 @@ relert.tickProcess(() => {
 除了`relert.tickProcess()`方法来监听一个函数以外，我们还提供了另一种方式：把两个函数`relert.tickStart()`和`relert.tickEnd()`分别放到需要监听代码段的开头和末尾：
 
 ```javascript
-relert.tickStart([processId: any, timeOut: number]);
-relert.tickEnd([processId: any]);
+relert.tickStart([processId: Any, timeOut: Number]);
+relert.tickEnd([processId: Any]);
 ```
 
 比如这样：
@@ -672,19 +672,19 @@ try {
 `relert.Static.Log`模块提供的接口有如下几个：
 
 ```javascript
-relert.log(info: any);
+relert.log(info: Any);
 ```
 
 输出调试信息。没什么好说的，就是在调试区显示一段文字。如果要输出多个变量的值，建议使用模板字符串，即类似\`${var}\`的格式。
 
 ```javascript
-relert.warn(warning: any);
+relert.warn(warning: Any);
 ```
 
 输出警告调试信息，以黄色为主色调显示。
 
 ```javascript
-relert.error(error: any);
+relert.error(error: Any);
 ```
 
 输出错误信息，以红色为主色调显示。注意这里并没有真的引发异常使程序终止。
@@ -735,6 +735,12 @@ relert.cls();
 
 
 
+### 地图初始化 Init
+
+该模块提供了一个函数`relert.init()`。一旦你在一个空的`relert`对象上执行这个函数，它就会被写入必要的数据，从而使其成为一张合法的空白地图。
+
+当你在`node.js`环境中生成了一个新的`relert`对象而不打算打开文件的时候，或者是在浏览器环境中打开了一个空白文件（真·空白文件）的时候，可能会需要用它来初始化地图。
+
 
 
 ### 工具箱 Toolbox
@@ -748,25 +754,25 @@ relert.cls();
 #### 随机数相关
 
 ```javascript
-relert.randomBetween(a: integer, b: integer): integer;
+relert.randomBetween(a: Integer, b: Integer): Integer;
 ```
 
 接受2个整数`a`和`b`，返回介于`a`和`b`之间的随机整数。
 
 ```javascript
-relert.randomFacing(): integer;
+relert.randomFacing(): Integer;
 ```
 
 返回随机朝向数值。朝向数值有`0, 32, 64, 96, 128, 160, 192, 224`八个，分别对应“右上, 右, 右下, 下, 左下, 左, 左上, 上”。
 
 ```javascript
-relert.randomStrength(a: float, b: float): integer;
+relert.randomStrength(a: Float, b: Float): Integer;
 ```
 
 接受两个0~1之间的实数`a`和`b`（代表生命值百分比的上下限，但是此函数不会检查输入），返回随机的生命值数字（`255`为满生命值的整数）。
 
 ```javascript
-relert.randomPosInnerMap(): Object {X: integer, Y: integer}
+relert.randomPosInnerMap(): Object {X: Integer, Y: Integer}
 ```
 
 返回地图内的随机坐标。
@@ -774,7 +780,7 @@ relert.randomPosInnerMap(): Object {X: integer, Y: integer}
 返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标。
 
 ```javascript
-relert.randomPosOnLine(obj1: Object, obj2: Object): Object {X: integer, Y: integer}
+relert.randomPosOnLine(obj1: Object, obj2: Object): Object {X: Integer, Y: Integer}
 ```
 
 返回`obj1`和`obj2`两个对象之间连线上的随机一格坐标。
@@ -788,19 +794,19 @@ relert.randomPosOnLine(obj1: Object, obj2: Object): Object {X: integer, Y: integ
 返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标，均为整数。
 
 ```javascript
-relert.randomPosInnerCircle(obj: Object, r: number): Object {X: integer, Y: integer}
+relert.randomPosInnerCircle(center: Object, r: Number): Object {X: Integer, Y: Integer}
 ```
 
-返回以对象`obj`为圆心、半径`r`的圆范围内随机一格的坐标。
+返回以对象`center`为圆心、半径`r`的圆范围内随机一格的坐标。
 
-有关于对象`obj`的属性需求，参考上一条`relert.randomPosOnLine`。
+有关于对象`center`的属性需求，参考上一条`relert.randomPosOnLine`。
 
 返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标，均为整数。
 
 *返回结果保证一定落在地图内*。如果给的条件不足以产生落在地图内的随机坐标，会抛出异常。
 
 ```javascript
-relert.randomSelect(list: array): any;
+relert.randomSelect(list: Array): Any;
 ```
 
 接受一个数组`list`，返回数组中的随机一项。
@@ -808,7 +814,7 @@ relert.randomSelect(list: array): any;
 #### 几何坐标相关
 
 ```javascript
-relert.posInnerMap(obj: object): boolean;
+relert.posInnerMap(obj: Object): Boolean;
 ```
 
 接受一个对象`obj`（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。
@@ -818,7 +824,7 @@ relert.posInnerMap(obj: object): boolean;
 也可以输入形如`{X: 12, Y: 34}`这样的对象，直接指定坐标。
 
 ```javascript
-relert.posInnerCircle(obj: object, x: number, y: number, r: number): boolean;
+relert.posInnerCircle(obj: Object, center: Object, r: Number): Boolean;
 ```
 
 接受一个对象（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在圆心坐标`(x, y)`、半径`r`的圆内。
@@ -826,7 +832,7 @@ relert.posInnerCircle(obj: object, x: number, y: number, r: number): boolean;
 有关于对象`obj`的属性需求，参考上一条`relert.posInnerMap`。
 
 ```javascript
-relert.posInnerTriangle(obj1: object, obj2: object, obj3: object): boolean;
+relert.posInnerTriangle(obj1: Object, obj2: Object, obj3: Object): Boolean;
 ```
 
 
@@ -887,10 +893,18 @@ const relert = require('./script/relert.js')();
 其次，在`node.js`端还多了一个可以直接使用的文件读取接口：
 
 ```javascript
-relert.load(filename: string);
+relert.load(filename: String);
 ```
 
 指定一个文件，将其读取并加载入`relert`实例。
+
+有读就有写，我们原有的`relert.save`接口仍然能正常的发挥作用。不带任何参数就是存到原有打开的文件，但甚至能存到任意位置的本地文件：
+
+```javascript
+relert.save([filename: String, [content: Buffer]]);
+```
+
+
 
 
 
@@ -930,5 +944,17 @@ relert.load(filename: string);
 
 
 
-## 附录：常用逻辑示例
+## 附录：常用逻辑示例代码
+
+### INI导入
+
+### 遍历物体
+
+### 随机生成
+
+### 触发组制作
+
+### 修改地形
+
+
 

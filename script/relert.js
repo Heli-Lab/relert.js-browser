@@ -61,6 +61,8 @@ const __Relert = function() {
         'relert.object.unit',
         'relert.object.aircraft',
         'relert.object.smudge',
+        'relert.object.terrain',
+        'relert.object.celltag',
 
     ];
 

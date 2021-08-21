@@ -70,35 +70,52 @@ const __RelertObject = function() {
 
     this.getInterface = (index) => {
         return new Proxy({
-            getData: () => {
-                return this.parent.INI[this.register][index];
-            },
-            setData: (data) => {
-                this.parent.INI[this.register][index] = data;
-            }
+            regKey: index.toString(),
         }, {
             get: (obj, key) => {
                 if (this.parameters.indexOf(key) >= 0) {
-                    if (obj.getData()) {
-                        return obj.getData().split(',')[this.parameters.indexOf(key)];
+                    if (this.parent.INI[this.register][obj.regKey]) {
+                        return this.parent.INI[this.register][obj.regKey].split(',')[this.parameters.indexOf(key)];
                     }
                 } else if (key == '$register') {
                     return this.register;
                 } else if (key == 'delete') {
                     return () => {
-                        delete this.parent.INI[this.register][index];
+                        delete this.parent.INI[this.register][obj.regKey];
                         if (this.arrayLike) {
-                            this.parent.INI[this.register].splice(index, 1);
+                            this.parent.INI[this.register].splice(obj.regKey, 1);
                         }
+                    }
+                } else if (!(this.arrayLike)) {
+                    if (key == 'X') {
+                        return obj.regKey.substring(obj.regKey.length - 3).replace(/\b(0+)/gi, '');
+                    } else if (key == 'Y') {
+                        return obj.regKey.substring(0, obj.regKey.length - 3).replace(/\b(0+)/gi, '');
                     }
                 }
             },
             set: (obj, key, value) => {
                 if (this.parameters.indexOf(key) >= 0) {
-                    let params = obj.getData().split(',');
+                    let params = this.parent.INI[this.register][obj.regKey].split(',');
                     params[this.parameters.indexOf(key)] = value;
-                    obj.setData(params.join(','));
+                    this.parent.INI[this.register][obj.regKey] = params.join(',');
                     return true;
+                } else if (!(this.arrayLike)) {
+                    if (key == 'X') {
+                        let oldData = this.parent.INI[this.register][obj.regKey];
+                        let oldRegKey = obj.regKey;
+                        delete this.parent.INI[this.register][oldRegKey];
+                        obj.regKey = oldRegKey.substring(0, oldRegKey.length - 3) + value.toString().padStart(3, '0');
+                        this.parent.INI[this.register][obj.regKey] = oldData;
+                        return true;
+                    } else if (key == 'Y') {
+                        let oldData = this.parent.INI[this.register][obj.regKey];
+                        let oldRegKey = obj.regKey;
+                        delete this.parent.INI[this.register][oldRegKey];
+                        obj.regKey = value.toString() + oldRegKey.substring(oldRegKey.length - 3);
+                        this.parent.INI[this.register][obj.regKey] = oldData;
+                        return true;
+                    }
                 }
             },
         });
@@ -107,20 +124,28 @@ const __RelertObject = function() {
     this.forEach = (callback) => {
         let lastItem = null;
         for (index in this.parent.INI[this.register]) {
-            do {
-                lastItem = this.parent.INI[this.register][index];
+            if (this.arrayLike) {
+                do {
+                    lastItem = this.parent.INI[this.register][index];
+                    callback(this.getInterface(index), index);
+                } while (!(lastItem == this.parent.INI[this.register][index]));
+            } else {
                 callback(this.getInterface(index), index);
-            } while (!(lastItem == this.parent.INI[this.register][index]));
+            }
         }
     }
 
     this[Symbol.iterator] = function*() {
         let lastItem = null;
         for (index in this.parent.INI[this.register]) {
-            do {
-                lastItem = this.parent.INI[this.register][index];
+            if (this.arrayLike) {
+                do {
+                    lastItem = this.parent.INI[this.register][index];
+                    yield this.getInterface(index);
+                } while (!(lastItem == this.parent.INI[this.register][index]));
+            } else {
                 yield this.getInterface(index);
-            } while (!(lastItem == this.parent.INI[this.register][index]))
+            }
         }
     }.bind(this);
 
@@ -135,6 +160,18 @@ const __RelertObject = function() {
                 }
             });
             this.parent.INI[this.register].push(params.join(','));
+        } else {
+            let x = obj.X ? obj.X : 0;
+            let y = obj.Y ? obj.Y : 0;
+            let params = [];
+            this.parameters.forEach((key) => {
+                if (obj[key]) {
+                    params.push(obj[key]);
+                } else {
+                    params.push(this.defaults[key])
+                }
+            });
+            this.parent.INI[this.register][y.toString() + x.toString().padStart(3, '0')] = params.join(',');
         }
     }
 
