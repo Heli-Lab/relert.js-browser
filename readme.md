@@ -1,4 +1,4 @@
-# relert.js-browser 0.1 说明文档（2021.8.20未完成）
+# relert.js-browser 0.1 说明文档（2021.8.22未完成）
 
 ## 简介
 
@@ -313,34 +313,59 @@ for (let i in civList) {
 
 ##### 公共操作
 
-
+（施工中）
 
 
 
 ##### 建筑 Structure
 
-建筑属性列表
 
-| 属性   | 描述         | 默认值     |
-| ------ | ------------ | ---------- |
-| `Type` | 建筑的注册名 | `'GAPOWR'` |
-|        |              |            |
-|        |              |            |
-|        |              |            |
-|        |              |            |
-|        |              |            |
-|        |              |            |
-|        |              |            |
+
+| 属性            | 描述               | 默认值            |
+| --------------- | ------------------ | ----------------- |
+| `House`         | 所属方             | `'Neutral House'` |
+| `Type`          | 注册名             | `'GAPOWR'`        |
+| `Sterngth`      | 生命值             | `'255'`           |
+| `X`             | `x`坐标            | `'0'`             |
+| `Y`             | `y`坐标            | `'0'`             |
+| `Facing`        | 面向               | `'0'`             |
+| `Tag`           | 关联标签           | `'none'`          |
+| `Sellable`      | 可变卖（无用属性） | `'0'`             |
+| `Rebuild`       | 重建（无用属性）   | `'0'`             |
+| `Enabled`       | 启用               | `'1'`             |
+| `UpgradesCount` | 加载物数量         | `'0'`             |
+| `SpotLight`     | 聚光灯             | `'0'`             |
+| `Upgrade1`      | 加载物1            | `'none'`          |
+| `Upgrade2`      | 加载物2            | `'none'`          |
+| `Upgrade3`      | 加载物3            | `'none'`          |
+| `AIRepair`      | AI修复             | `'1'`             |
+| `ShowName`      | 显示名称           | `'0'`             |
 
 
 
 ##### 步兵 Infantry
 
+
+
 ##### 车辆 Unit
+
+
 
 ##### 飞行器 Aircraft
 
+
+
 ##### 地形对象 Terrain
+
+
+
+| 属性   | 描述    | 默认值     |
+| ------ | ------- | ---------- |
+| `Type` | 注册名  | `'TREE01'` |
+| `X`    | `x`坐标 | `'0'`      |
+| `Y`    | `y`坐标 | `'0'`      |
+
+注意：同一个位置上只有一个地形对象。这意味着你在修改地形对象的`X`或者`Y`属性的时候，可能会覆盖掉原有位置上的地形对象。
 
 ##### 污染 Smudge
 
@@ -348,28 +373,36 @@ for (let i in civList) {
 
 | 属性     | 描述                              | 默认值       |
 | -------- | --------------------------------- | ------------ |
-| `Type`   | 污染的注册名                      | `'CRATER01'` |
-| `X`      | 污染的`x`坐标                     | `'0'`        |
-| `Y`      | 污染的`y`坐标                     | `'0'`        |
+| `Type`   | 注册名                            | `'CRATER01'` |
+| `X`      | `x`坐标                           | `'0'`        |
+| `Y`      | `y`坐标                           | `'0'`        |
 | `Ignore` | 是否被忽略（填非0的值都会被忽略） | `'0'`        |
 
 
 
 ##### 路径点 Waypoint
 
+（施工中）
+
 ##### 基地节点 BaseNode
 
-
+（施工中）
 
 #### 地表数据 MapData
 
-地表`MapData`描述这样一类对象：它由覆盖整张地图的Base64编码数据组成。
+地表`MapData`描述这样一类对象：它由覆盖整张地图的Base64编码数据组成。在使用之前，需要先对整个区段进行解码，才能得到可直接操作的数据。
+
+#### 公共操作
+
+（施工中）
 
 ##### 地形 MapPack
 
+（施工中）
+
 ##### 覆盖物 OverlayPack
 
-
+（施工中）
 
 #### 逻辑 Logic
 
@@ -377,23 +410,33 @@ for (let i in civList) {
 
 ##### 特遣部队 TaskForce
 
+（施工中）
+
 ##### 动作脚本 Script
+
+（施工中）
 
 ##### 作战小队 TeamType
 
+（施工中）
+
 ##### 触发 Trigger
+
+（施工中）
 
 ##### AI触发 AITrigger
 
+（施工中）
+
 ##### 局部变量 LocalVariable
 
-
+（施工中）
 
 #### 注册表 Register
 
 注册表`Register`描述这样一类对象：
 
-
+（施工中）
 
 #### 选择器 Picker
 
@@ -401,7 +444,7 @@ for (let i in civList) {
 
 ##### 位置坐标选择器
 
-
+（施工中）
 
 ## 静态模块
 
@@ -775,7 +818,7 @@ relert.randomStrength(a: Float, b: Float): Integer;
 relert.randomPosInnerMap(): Object {X: Integer, Y: Integer}
 ```
 
-返回地图内的随机坐标。
+返回地图内的随机坐标。（暂未实装）
 
 返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标。
 
@@ -783,7 +826,7 @@ relert.randomPosInnerMap(): Object {X: Integer, Y: Integer}
 relert.randomPosOnLine(obj1: Object, obj2: Object): Object {X: Integer, Y: Integer}
 ```
 
-返回`obj1`和`obj2`两个对象之间连线上的随机一格坐标。
+返回`obj1`和`obj2`两个对象之间连线上的随机一格坐标。（暂未实装）
 
 `obj1`和`obj2`两个对象都必须具有`X`和`Y`属性，代表了它们的坐标。
 
@@ -797,7 +840,7 @@ relert.randomPosOnLine(obj1: Object, obj2: Object): Object {X: Integer, Y: Integ
 relert.randomPosInnerCircle(center: Object, r: Number): Object {X: Integer, Y: Integer}
 ```
 
-返回以对象`center`为圆心、半径`r`的圆范围内随机一格的坐标。
+返回以对象`center`为圆心、半径`r`的圆范围内随机一格的坐标。（暂未实装）
 
 有关于对象`center`的属性需求，参考上一条`relert.randomPosOnLine`。
 
@@ -817,7 +860,7 @@ relert.randomSelect(list: Array): Any;
 relert.posInnerMap(obj: Object): Boolean;
 ```
 
-接受一个对象`obj`（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。
+接受一个对象`obj`（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。（暂未实装）
 
 可以将`relert.js`提供的，数据代理层的“物体”对象直接传入，因为它们都有`X`和`Y`属性。
 
@@ -827,7 +870,7 @@ relert.posInnerMap(obj: Object): Boolean;
 relert.posInnerCircle(obj: Object, center: Object, r: Number): Boolean;
 ```
 
-接受一个对象（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在圆心坐标`(x, y)`、半径`r`的圆内。
+接受一个对象（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在圆心坐标`(x, y)`、半径`r`的圆内。（暂未实装）
 
 有关于对象`obj`的属性需求，参考上一条`relert.posInnerMap`。
 
@@ -835,21 +878,21 @@ relert.posInnerCircle(obj: Object, center: Object, r: Number): Boolean;
 relert.posInnerTriangle(obj1: Object, obj2: Object, obj3: Object): Boolean;
 ```
 
-
+（暂未实装）
 
 ## 浏览器环境模块
 
 ### 时光机 Timeline
 
-
+（施工中）
 
 ### 编辑器 Editor
 
-
+（施工中）
 
 ### 运行时沙盒 Sandbox
 
-
+（施工中）
 
 
 
@@ -914,23 +957,33 @@ relert.save([filename: String, [content: Buffer]]);
 
 #### 判断入口
 
+（施工中）
+
 #### 文件读写
+
+（施工中）
 
 #### 环境差异
 
+（施工中）
+
 #### 使用relert.log
+
+（施工中）
 
 
 
 ### 多个relert.js实例
 
-
+（施工中）
 
 
 
 ## 定制开发
 
 本章讨论`relert.js-browser`在浏览器端的定制开发问题——比如说，我想要丢弃原有的`index.html`，重新开发一个网页客户端，需要做什么呢？
+
+（施工中）
 
 ## 关于
 
@@ -942,19 +995,27 @@ relert.save([filename: String, [content: Buffer]]);
 
 ## 附录：relert.js代码风格约定
 
-
+（施工中）
 
 ## 附录：常用逻辑示例代码
 
 ### INI导入
 
+（施工中）
+
 ### 遍历物体
+
+（施工中）
 
 ### 随机生成
 
+（施工中）
+
 ### 触发组制作
+
+（施工中）
 
 ### 修改地形
 
-
+（施工中）
 
