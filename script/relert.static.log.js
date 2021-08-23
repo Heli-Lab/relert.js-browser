@@ -65,21 +65,24 @@ const __Log = new function() {
     }
 
     this.exports = {
-        log: (str) => {
+        log: (...strs) => {
+            let str = strs.join(' ');
             if (this.dom) {
                 this.__log(str, '');
             } else {
                 console.log(str);
             }
         },
-        error: (str) => {
+        error: (...strs) => {
+            let str = strs.join(' ');
             if (this.dom) {
                 this.__log(str, 'log-item-error');
             } else {
                 console.error(str);
             }
         },
-        warn: (str) => {
+        warn: (...strs) => {
+            let str = strs.join(' ');
             if (this.dom) {
                 this.__log(str, 'log-item-warn');
             } else {
