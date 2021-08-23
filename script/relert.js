@@ -53,6 +53,7 @@ const __Relert = function() {
         'relert.static.gb2312',
         'relert.static.log',
         'relert.static.filesys',
+        'relert.static.init',
         'relert.static.toolbox',
 
         'relert.object',
