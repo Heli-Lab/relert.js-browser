@@ -1098,29 +1098,32 @@ relert.Structure.forEach((item) => { //对于从Structure中取出每一个item
 
 ```javascript
 // relert.js范例B-2：均匀分布树木类型
-// * 用途：地图上已有的树木位置不变，但类型重新安排，使其尽可能保证平均分布
+// * 用途：地图上已有的树木位置不变，但类型重新安排，使其尽可能保证平均分布，重复的树木不挨的太近
 // * 运行环境：浏览器
-// * 使用方法：
+
+//计算量可能很大，多给点时间吧
+relert.tickTimeOut(10000);
 
 //希望出现的树木类型
-let treeType = ['TREE05', 'TREE06', 'TREE07', 'TREE08', 'TREE10', 'TREE11', 'TREE12', 'TREE14'];
+let treeType = ['TREE05', 'TREE06', 'TREE07', 'TREE08', 'TREE10', 'TREE11', 'TREE12', 'TREE14', 'TREE15'];
 
 //判断Terrain是否是树木的函数
 let isTree = (item) => {
-    return (item.Type.subString(0, 4)) == 'TREE';
+    return (item.Type.substring(0, 4)) == 'TREE';
 }
 
-//树木分布热力图
+//树木分布权重图
+//每放置一棵树，在其周围都会产生一圈递减的权重
 let heatMap = {};
-//在热力图上放置树木
+//在权重图上放置树木
 let heatPlace = (item) => {
-    let r = 10; //每棵树木的影响半径/格
+    let r = 15; //每棵树木的影响半径/格
     for (let i = -r; i <= r; i++) {
         for (let j = -r; j <= r; j++) {
             let distance = Math.hypot(i, j);
             let coord = relert.posToCoord({
-                X: item.X + i,
-                Y: item.Y + j,
+                X: parseInt(item.X) + i,
+                Y: parseInt(item.Y) + j,
             });
             if ((distance > r) || (distance < Number.EPSILON)) {
                 continue;
@@ -1131,12 +1134,12 @@ let heatPlace = (item) => {
             if (!heatMap[coord][item.Type]) {
                 heatMap[coord][item.Type] = 0;
             }
-            heatMap[coord][item.Type] += 1 / distance;
+            heatMap[coord][item.Type] += Math.exp(-distance);
         }
     }
 }
 
-//获取某个点位最“冷”的树木
+//获取某个点位权重最低的树木
 let getWeakHeat = (pos) => {
     let coord = relert.posToCoord(pos);
     if (!heatMap[coord]) {
@@ -1144,20 +1147,20 @@ let getWeakHeat = (pos) => {
     }
     let minHeat = 9999;
     let minHeatType = '';
-    for (let type in treeType) {
-        if (!heatMap[coord][type]) {
-            return type;
+    for (let i in treeType) {
+        if (!heatMap[coord][treeType[i]]) {
+            return treeType[i];
         } else {
-            if (heatMap[coord][type] < minHeat) {
-                minHeatType = type;
-                minHeat = heatMap[coord][type];
+            if (heatMap[coord][treeType[i]] < minHeat) {
+                minHeatType = treeType[i];
+                minHeat = heatMap[coord][treeType[i]];
             }
         }
     }
     return minHeatType;
 }
 
-//遍历树木
+//遍历树木并重新排布
 relert.Terrain.forEach((item) => {
     if (isTree(item)) {
         item.Type = getWeakHeat(item);
