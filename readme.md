@@ -880,7 +880,7 @@ relert.randomSelect(list: Array): Any;
 
 接受一个数组`list`，返回数组中的随机一项。
 
-#### 几何坐标相关
+#### 几何相关
 
 ```javascript
 relert.posInnerMap(obj: Object): Boolean;
@@ -905,6 +905,33 @@ relert.posInnerTriangle(obj1: Object, obj2: Object, obj3: Object): Boolean;
 ```
 
 （暂未实装）
+
+#### 坐标转换相关
+
+在`relert.js`中的“坐标”类型的数据有`pos`和`coord`两种格式：
+
+* `pos`格式：使用一个对象表示坐标，对象的`X`和`Y`属性代表`x`、`y`坐标值。任何一个“物体”的子代理都是合法的`pos`格式坐标，因为它们都有`X`和`Y`属性。
+* `coord`格式：使用一个4~6位由数码组成的字符串表示坐标，后3位表示`x`坐标（缺位用0补齐），后3位之前表示`y`坐标。（地图内部结构中多使用这种坐标，而且这种坐标表示便于使用1维结构进行编码）
+
+虽然`relert.js`提供的大部分接口都使用了`pos`格式的坐标，但总有不得不使用`coord`格式的坐标的时候。
+
+`relert.static.Toolbox`提供了在两种坐标格式之间转换的函数：
+
+```javascript
+relert.posToCoord(pos: Object): String;
+```
+
+把`pos`格式转化为`coord`格式坐标。
+
+```javascript
+relert.coordToPos(coord: String): Object;
+```
+
+把`coord`格式转化为`pos`格式坐标。
+
+
+
+
 
 ## 浏览器环境模块
 
@@ -1027,15 +1054,136 @@ relert.save([filename: String, [content: Buffer]]);
 
 ### INI导入
 
-（施工中）
+```javascript
+// relert.js范例A-1：平民单位INI导入
+// * 用途：将所有平民步兵全都设置为不随机走动、受主动攻击、血量50点
+// * 运行环境：浏览器
 
-### 遍历物体
+// 需要修改属性的平民单位列表
+let civList = ['CIV1', 'CIV2', 'CIV3', 'CIVA', 'CIVB', 'CIVC'];
 
-（施工中）
+for (let i in civList) {
+    // 判断对应的平民单位字段是否存在
+    if (!relert.INI[civList[i]]) {
+        // 如果不存在就新建一个空的
+        relert.INI[civList[i]] = {};
+    }
+    Object.assign(relert.INI[civList[i]], {
+        Insignificant: 'yes',
+        Strength: '50',
+    });
+}
+```
+
+
+
+### 遍历物体，调整属性
+
+```javascript
+// relert.js范例B-1：平民建筑生命值调整
+// * 用途：将地图上特定作战方（平民方）的特定建筑物，生命值在一个范围内随机调整
+// * 运行环境：浏览器
+
+let ignoreList = []; //定义一个ignoreList“忽略列表”，表示不想被此脚本处理的建筑物类型列表
+
+relert.Structure.forEach((item) => { //对于从Structure中取出每一个item
+	if ((item.House == 'Neutral Houe') && (ignoreList.indexOf(item.Type) == -1) { //如果其所属为Neutral House，且类型不在ignoreList内
+        item.set({
+           Strength: randomStrength(0.15, 0.25), //设置其生命值在15%~25%之间
+           AIRepair: '0', //设置其AI修复属性为0
+        });
+    }
+});
+```
+
+```javascript
+// relert.js范例B-2：均匀分布树木类型
+// * 用途：地图上已有的树木位置不变，但类型重新安排，使其尽可能保证平均分布
+// * 运行环境：浏览器
+// * 使用方法：
+
+//希望出现的树木类型
+let treeType = ['TREE05', 'TREE06', 'TREE07', 'TREE08', 'TREE10', 'TREE11', 'TREE12', 'TREE14'];
+
+//判断Terrain是否是树木的函数
+let isTree = (item) => {
+    return (item.Type.subString(0, 4)) == 'TREE';
+}
+
+//树木分布热力图
+let heatMap = {};
+//在热力图上放置树木
+let heatPlace = (item) => {
+    let r = 10; //每棵树木的影响半径/格
+    for (let i = -r; i <= r; i++) {
+        for (let j = -r; j <= r; j++) {
+            let distance = Math.hypot(i, j);
+            let coord = relert.posToCoord({
+                X: item.X + i,
+                Y: item.Y + j,
+            });
+            if ((distance > r) || (distance < Number.EPSILON)) {
+                continue;
+            }
+            if (!heatMap[coord]) {
+                heatMap[coord] = {};
+            }
+            if (!heatMap[coord][item.Type]) {
+                heatMap[coord][item.Type] = 0;
+            }
+            heatMap[coord][item.Type] += 1 / distance;
+        }
+    }
+}
+
+//获取某个点位最“冷”的树木
+let getWeakHeat = (pos) => {
+    let coord = relert.posToCoord(pos);
+    if (!heatMap[coord]) {
+        return relert.randomSelect(treeType);
+    }
+    let minHeat = 9999;
+    let minHeatType = '';
+    for (let type in treeType) {
+        if (!heatMap[coord][type]) {
+            return type;
+        } else {
+            if (heatMap[coord][type] < minHeat) {
+                minHeatType = type;
+                minHeat = heatMap[coord][type];
+            }
+        }
+    }
+    return minHeatType;
+}
+
+//遍历树木
+relert.Terrain.forEach((item) => {
+    if (isTree(item)) {
+        item.Type = getWeakHeat(item);
+        heatPlace(item);
+    }
+});
+```
+
+
 
 ### 随机生成
 
-（施工中）
+```javascript
+// relert.js范例：随机生成污染
+// * 用途：在地图上随机生成污染
+// * 运行环境：浏览器
+
+let density = 0.01; //随机生成污染的密度（个/格）
+let smudgeList = []; //污染种类
+
+//此示例未完成
+```
+
+
+
+### 批量删除物体
 
 ### 触发组制作
 
