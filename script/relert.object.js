@@ -36,7 +36,11 @@ const __RelertObject = function() {
             if (this.exports.indexOf(key) >= 0) {
                 return obj[key];
             } else if (['length', 'count'].indexOf(key) >= 0) {
-                return obj.parent.INI[obj.register].length;
+                if (this.arrayLike) {
+                    return obj.parent.INI[obj.register].length;
+                } else {
+                    return Object.keys(obj.parent.INI[obj.register]).length;
+                }
             } else if (obj.parent.INI[obj.register][key]) {
                 return obj.getInterface(key);
             }
@@ -53,7 +57,7 @@ const __RelertObject = function() {
         ownKeys: (obj) => {
             return Object.keys(obj.parent.INI[obj.register]);
         },
-    })
+    });
 
     // 挂载函数
     this.mount = (parent) => {
@@ -90,7 +94,7 @@ const __RelertObject = function() {
                             this.parent.INI[this.register].splice(obj.regKey, 1);
                         }
                     }
-                } else if (key == 'set') { // set方法：同时修改多条数据
+                } else if (key == 'set') { // set方法：同时修改多条属性
                     return (newObj) => {
                         let params = [];
                         let oldParams = this.parent.INI[this.register][obj.regKey].split(',');

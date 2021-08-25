@@ -64,6 +64,7 @@ const __Relert = function() {
         'relert.object.smudge',
         'relert.object.terrain',
         'relert.object.celltag',
+        'relert.object.waypoint',
 
     ];
 
