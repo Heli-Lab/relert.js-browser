@@ -739,19 +739,21 @@ try {
 `relert.Static.Log`模块提供的接口有如下几个：
 
 ```javascript
-relert.log(info: Any);
+relert.log(...info: Any);
 ```
 
-输出调试信息。没什么好说的，就是在调试区显示一段文字。如果要输出多个变量的值，建议使用模板字符串，即类似\`${var}\`的格式。
+输出调试信息。没什么好说的，就是在调试区显示一段文字。
+
+如果要输出多个变量的值，可以使用逗号分隔，也使用模板字符串（即类似\`${var}\`的格式）。
 
 ```javascript
-relert.warn(warning: Any);
+relert.warn(...warning: Any);
 ```
 
-输出警告调试信息，以黄色为主色调显示。
+输出警告调试信息。以黄色为主色调显示，其余同上。
 
 ```javascript
-relert.error(error: Any);
+relert.error(...error: Any);
 ```
 
 输出错误信息，以红色为主色调显示。注意这里并没有真的引发异常使程序终止。
@@ -820,6 +822,53 @@ relert.cls();
 
 下面分类对这些函数进行介绍：
 
+#### 坐标转换相关
+
+在`relert.js`中的“坐标”类型的数据有`pos`和`coord`两种格式：
+
+* `pos`格式：使用一个对象表示坐标，对象的`X`和`Y`属性代表`x`、`y`坐标值。任何一个“物体”的子代理都是合法的`pos`格式坐标，因为它们都有`X`和`Y`属性。
+* `coord`格式：使用一个4~6位由数码组成的字符串表示坐标，后3位表示`x`坐标（缺位用0补齐），后3位之前表示`y`坐标。（地图内部结构中多使用这种坐标，而且这种坐标表示便于使用1维结构进行编码）
+
+虽然`relert.js`提供的大部分接口都使用了`pos`格式的坐标，但总有不得不使用`coord`格式的坐标的时候。
+
+`relert.static.Toolbox`提供了在两种坐标格式之间转换的函数：
+
+```javascript
+relert.posToCoord(pos: Object): String;
+```
+
+把`pos`格式转化为`coord`格式坐标。
+
+```javascript
+relert.coordToPos(coord: String): Object;
+```
+
+把`coord`格式转化为`pos`格式坐标。
+
+#### 几何相关
+
+```javascript
+relert.posInnerMap(pos: Object): Boolean;
+```
+
+接受一个`pos`坐标对象（一个带有`X`和`Y`属性的对象，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。（暂未实装）
+
+可以将`relert.js`提供的，数据代理层的“物体”对象直接传入，因为它们都有`X`和`Y`属性。
+
+也可以输入形如`{X: 12, Y: 34}`这样的对象，直接指定坐标。
+
+```javascript
+relert.posInnerCircle(pos: Object, center: Object, r: Number): Boolean;
+```
+
+接受一个`pos`坐标对象（一个带有`X`和`Y`属性的对象，代表它的X坐标和Y坐标），返回它的坐标是否在圆心为`pos`坐标`center`、半径为`r`的圆内。（暂未实装）
+
+```javascript
+relert.posInnerTriangle(obj1: Object, obj2: Object, obj3: Object): Boolean;
+```
+
+（暂未实装）
+
 #### 随机数相关
 
 ```javascript
@@ -846,31 +895,29 @@ relert.randomPosInnerMap(): Object {X: Integer, Y: Integer}
 
 返回地图内的随机坐标。（暂未实装）
 
-返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标。
+返回值为一个`pos`坐标对象。
 
 ```javascript
-relert.randomPosOnLine(obj1: Object, obj2: Object): Object {X: Integer, Y: Integer}
+relert.randomPosOnLine(pos1: Object, pos2: Object): Object {X: Integer, Y: Integer}
 ```
 
-返回`obj1`和`obj2`两个对象之间连线上的随机一格坐标。（暂未实装）
+返回`pos1`和`pos2`两个坐标之间连线上的随机一格坐标。（暂未实装）
 
-`obj1`和`obj2`两个对象都必须具有`X`和`Y`属性，代表了它们的坐标。
+`pos1`和`pos2`两个对象为`pos`坐标。
 
-可以将`relert.js`提供的，数据代理层的“物体”对象直接传入，因为它们都有`X`和`Y`属性。
+可以将`relert.js`提供的，数据代理层的“物体”对象直接传入，因为它们都有`X`和`Y`属性，都是合法的`pos`坐标。
 
 也可以输入形如`{X: 12, Y: 34}`这样的对象，直接指定坐标。
 
-返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标，均为整数。
+返回值为一个`pos`坐标对象。
 
 ```javascript
 relert.randomPosInnerCircle(center: Object, r: Number): Object {X: Integer, Y: Integer}
 ```
 
-返回以对象`center`为圆心、半径`r`的圆范围内随机一格的坐标。（暂未实装）
+返回以`pos`坐标`center`为圆心、半径`r`的圆范围内随机一格的坐标。（暂未实装）
 
-有关于对象`center`的属性需求，参考上一条`relert.randomPosOnLine`。
-
-返回值为一个`Object`对象，其属性`X`和`Y`对应了X坐标和Y坐标，均为整数。
+返回值为一个`pos`坐标对象。
 
 *返回结果保证一定落在地图内*。如果给的条件不足以产生落在地图内的随机坐标，会抛出异常。
 
@@ -879,57 +926,6 @@ relert.randomSelect(list: Array): Any;
 ```
 
 接受一个数组`list`，返回数组中的随机一项。
-
-#### 几何相关
-
-```javascript
-relert.posInnerMap(obj: Object): Boolean;
-```
-
-接受一个对象`obj`（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。（暂未实装）
-
-可以将`relert.js`提供的，数据代理层的“物体”对象直接传入，因为它们都有`X`和`Y`属性。
-
-也可以输入形如`{X: 12, Y: 34}`这样的对象，直接指定坐标。
-
-```javascript
-relert.posInnerCircle(obj: Object, center: Object, r: Number): Boolean;
-```
-
-接受一个对象（其必须带有`X`和`Y`属性，代表它的X坐标和Y坐标），返回它的坐标是否在圆心坐标`(x, y)`、半径`r`的圆内。（暂未实装）
-
-有关于对象`obj`的属性需求，参考上一条`relert.posInnerMap`。
-
-```javascript
-relert.posInnerTriangle(obj1: Object, obj2: Object, obj3: Object): Boolean;
-```
-
-（暂未实装）
-
-#### 坐标转换相关
-
-在`relert.js`中的“坐标”类型的数据有`pos`和`coord`两种格式：
-
-* `pos`格式：使用一个对象表示坐标，对象的`X`和`Y`属性代表`x`、`y`坐标值。任何一个“物体”的子代理都是合法的`pos`格式坐标，因为它们都有`X`和`Y`属性。
-* `coord`格式：使用一个4~6位由数码组成的字符串表示坐标，后3位表示`x`坐标（缺位用0补齐），后3位之前表示`y`坐标。（地图内部结构中多使用这种坐标，而且这种坐标表示便于使用1维结构进行编码）
-
-虽然`relert.js`提供的大部分接口都使用了`pos`格式的坐标，但总有不得不使用`coord`格式的坐标的时候。
-
-`relert.static.Toolbox`提供了在两种坐标格式之间转换的函数：
-
-```javascript
-relert.posToCoord(pos: Object): String;
-```
-
-把`pos`格式转化为`coord`格式坐标。
-
-```javascript
-relert.coordToPos(coord: String): Object;
-```
-
-把`coord`格式转化为`pos`格式坐标。
-
-
 
 
 
@@ -1084,10 +1080,15 @@ for (let i in civList) {
 // * 用途：将地图上特定作战方（平民方）的特定建筑物，生命值在一个范围内随机调整
 // * 运行环境：浏览器
 
-let ignoreList = []; //定义一个ignoreList“忽略列表”，表示不想被此脚本处理的建筑物类型列表
+let ignoreList = ['CAARMY01', 'CAARMY02', 'CAARMY03', 'CAARMY04', 'CATS01', 'CAEURO05', 'CAWASH18',
+ 'CASANF15', 'CAFRMB', 'CAWT01', 'CAMSC01', 'CAMSC02', 'CAMSC03', 'CAMSC04', 'CAMSC05', 'CAMSC11', 'CAPARK01',
+ 'CAPARK02', 'CAPARK03', 'CAPARK04', 'CAPARK05', 'CAPARK06', 'CAMISC04', 'CAPARS07', 'CAMSC06',
+ 'CAURB01', 'CAURB02', 'CABARR01', 'CABARR02', 'CASIN03E', 'CASIN03S', 'CAMISC03', 'CAMISC05',
+ 'CAMISC11', 'CASTRT05', 'INBLULMP', 'INREDLMP', 'INGALITE', 'INGRNLMP', 'INYELWLAMP', 'INORANLAMP',
+ 'INPURPLAMP', 'CAOILD']; //定义一个ignoreList“忽略列表”，表示不想被此脚本处理的建筑物类型列表
 
 relert.Structure.forEach((item) => { //对于从Structure中取出每一个item
-	if ((item.House == 'Neutral Houe') && (ignoreList.indexOf(item.Type) == -1) { //如果其所属为Neutral House，且类型不在ignoreList内
+	if ((item.House == 'Neutral Houe') && (!ignoreList.includes(item.Type)) { //如果其所属为Neutral House，且类型不在ignoreList内
         item.set({
            Strength: randomStrength(0.15, 0.25), //设置其生命值在15%~25%之间
            AIRepair: '0', //设置其AI修复属性为0
