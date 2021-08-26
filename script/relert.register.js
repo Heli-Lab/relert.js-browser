@@ -3,12 +3,13 @@
  * relert.js 注册表基类
  **********************************/
 
- const __RelertRegister = function() {
-    this.entrance = '';
-    this.register = '';
-    this.defaults = {};
+ const __RelertRegister = function(reg = '', def = {}) {
+    this.entrance = reg;
+    this.register = reg;
+    this.defaults = def;
     this.exports = ['parameters', 'entrance', 'forEach', 'add', 'delete', 'empty', 'includes', Symbol.iterator];
     this.parent = undefined;
+    this.addName = false;
 
     this.checkArray = () => {
         if (this.parent.INI[this.register] == undefined) {
@@ -112,6 +113,9 @@
         for (let i in obj.INI) {
             this.parent.INI[obj.Name][i] = obj.INI[i];
         }
+        if (this.addName) {
+            this.parent.INI[obj.Name]['Name'] = obj.Name;
+        }
         for (let i in this.defaults) {
             if (!this.parent.INI[obj.Name][i]) {
                 this.parent.INI[obj.Name][i] = this.defaults[i];
@@ -130,7 +134,7 @@
         if (typeof judge == 'function') {
             this.forEach((item, index) => {
                 if (judge(item)) {
-                    delete item.INI;
+                    delete this.parent.INI[item.Name];
                     this.parent.INI[this.register].splice(index, 1);
                 }
             });
@@ -140,7 +144,7 @@
                     if (item[key] != judge[key]) {
                         return;
                     }
-                    delete item.INI;
+                    delete this.parent.INI[item.Name];
                     this.parent.INI[this.register].splice(index, 1);
                 }
             });

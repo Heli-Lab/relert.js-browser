@@ -66,6 +66,10 @@ const __Relert = function() {
         'relert.object.celltag',
         'relert.object.waypoint',
 
+        'relert.register',
+        'relert.register.country',
+        'relert.register.house',
+
     ];
 
     // 浏览器端额外的模块
