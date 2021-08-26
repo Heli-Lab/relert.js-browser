@@ -33,9 +33,9 @@ const __RelertObject = function() {
         },
         get: (obj, key) => {
             this.checkArray();
-            if (this.exports.indexOf(key) >= 0) {
+            if (this.exports.includes(key)) {
                 return obj[key];
-            } else if (['length', 'count'].indexOf(key) >= 0) {
+            } else if (['length', 'count'].includes(key)) {
                 if (this.arrayLike) {
                     return obj.parent.INI[obj.register].length;
                 } else {
@@ -81,7 +81,7 @@ const __RelertObject = function() {
             regKey: index.toString(),
         }, {
             get: (obj, key) => {
-                if (this.parameters.indexOf(key) >= 0) { // parameters中定义的参数
+                if (this.parameters.includes(key)) { // parameters中定义的参数
                     if (this.parent.INI[this.register][obj.regKey]) {
                         return this.parent.INI[this.register][obj.regKey].split(',')[this.parameters.indexOf(key)];
                     }
@@ -126,7 +126,7 @@ const __RelertObject = function() {
                 }
             },
             set: (obj, key, value) => {
-                if (this.parameters.indexOf(key) >= 0) { // parameters中定义的参数
+                if (this.parameters.includes(key)) { // parameters中定义的参数
                     let params = this.parent.INI[this.register][obj.regKey].split(',');
                     params[this.parameters.indexOf(key)] = value;
                     this.parent.INI[this.register][obj.regKey] = params.join(',');
@@ -149,6 +149,24 @@ const __RelertObject = function() {
                     }
                 }
             },
+            ownKeys: (obj) => {
+                if (this.arrayLike) {
+                    return this.parameters;
+                } else {
+                    return this.parameters.concat(['X', 'Y']);
+                }
+            },
+            has: (obj, key) => {
+                if (this.parameters.includes(key)) {
+                    return true;
+                } else if (this.arrayLike) {
+                    if (['X', 'Y'].includes(key)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
         });
     }
 
