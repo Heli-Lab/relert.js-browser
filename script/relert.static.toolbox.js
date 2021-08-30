@@ -38,6 +38,9 @@ const __Toolbox = function() {
                 Y: str.subString(0, str.length - 3).replace(/\b(0+)/gi, ''),
             };
         },
+        isPos: (pos) => {
+            return (typeof pos.X == 'number') && (typeof pos.Y == 'number');
+        },
         // 随机数相关
         randomFacing: () => {
             return Math.trunc(Math.random() * 8) * 32;
@@ -52,6 +55,20 @@ const __Toolbox = function() {
             return list[Math.trunc(Math.random() * list.length)];
         },
     }
+
+    // 原型方法添加
+
+    // Object.set
+    Object.prototype.set = function(obj) {
+        Object.assign(this, obj);
+        return this;
+    }
+
+    // Array.randomItem
+    Array.prototype.randomItem = function() {
+        return this[Math.trunc(Math.random() * this.length)];
+    }
+
 }
 
 if ((typeof window == 'object') && (this === window)) {

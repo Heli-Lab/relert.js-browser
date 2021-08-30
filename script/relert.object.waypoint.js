@@ -41,8 +41,8 @@
             get: (obj, key) => {
                 if (key == 'Number') { // 路径点的Number属性
                     return obj.regKey;
-                } else if (key == '$register') { // 注册表
-                    return this.register;
+                } else if (key == '$category') { // 类型
+                    return this.entrance;
                 } else if (key == 'delete') { // 删除方法
                     return () => {
                         delete this.parent.INI[this.register][obj.regKey];

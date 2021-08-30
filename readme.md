@@ -1,4 +1,4 @@
-# relert.js-browser 0.1 说明文档（2021.8.22未完成）
+# relert.js-browser 0.1 说明文档（2021.8.30未完成）
 
 警告：本版本为尚未完成的开发版，许多功能不完善且未经验证。请在使用前对你的地图做好备份。
 
@@ -87,7 +87,7 @@ relert.log('helloworld');
 
 #### 打开地图，并在地图上执行代码
 
-`relert.log(info: string)`这个`JavaScript`函数用于在调试信息区输出内容，这个函数不需要在某一张地图上就可以执行。
+`relert.log(info: String)`这个`JavaScript`函数用于在调试信息区输出内容，这个函数不需要在某一张地图上就可以执行。
 
 如果想要使用脚本具体操作地图上的物件，我们需要先加载一张地图。
 
@@ -99,7 +99,7 @@ relert.log('helloworld');
 
 * **打开地图文件**。
 
-* 在一个快照上**执行脚本**。“执行脚本”的过程其实就是：*脚本在当前快照的状态上进行操作，操作的结果会存入下一个状态，也就是新的快照*。
+* 在一个快照上**执行脚本**。“执行脚本”的过程其实就是：脚本在当前快照的状态上进行操作，操作的结果会存入下一个状态，也就是新的快照。
 
 * 刚刚打开`relert.js-browser`时，**从缓存中恢复**上一次关闭之前的最后一个快照。
 
@@ -118,7 +118,7 @@ relert.Structure.forEach((structure) => {
 
 这次在右栏下半部分的调试信息区出现了更多的内容，而且我们看到，左侧边栏的地图快照列表中新增了一个快照——它就是这段脚本执行以后地图的状态。而在这个快照的上方，地图刚打开时的原始状态仍然保留在快照列表中。
 
-你可以通过快照列表里面的“**载入**”按钮随时切换哪一个快照为**当前快照**（在列表中使用彩色显示）。*脚本的执行都是在当前快照上执行*。
+你可以通过快照列表里面的“**载入**”按钮随时切换哪一个快照为**当前快照**（在列表中使用彩色显示）。脚本的执行都是在当前快照上执行。
 
 “**保存**”按钮允许你把任何一个快照以文件的形式下载。
 
@@ -241,7 +241,7 @@ relert.INI['SectionA']['keyA1']
 
 #### 多属性操作
 
-如果想要同时对多个属性进行操作，考虑使用`JavaScript`自带的原型方法`Object.assign(target: Object, obj : Object)`来进行。
+如果想要同时对多个属性进行操作，可以考虑使用我们在`relert.Toolbox`模块为`Object`引入的原型方法：`Object.prototype.set`。
 
 下面展示一个实用性的例子：
 
@@ -257,8 +257,8 @@ for (let i in civList) {
         // 如果不存在就新建一个空的
         relert.INI[civList[i]] = {};
     }
-    // 使用Object.assign()将后面的对象合并入前面的relert.INI[civList[i]]
-    Object.assign(relert.INI[civList[i]], {
+    // 使用set()方法将后面的对象合并入前面的relert.INI[civList[i]]
+    relert.INI[civList[i]].set({
         // 这样利用合并机制，可以同时修改多个属性
         Insignificant: 'yes',
         Strength: '50',
@@ -309,7 +309,7 @@ for (let i in civList) {
 | 各作战方注册表下 | `relert.BaseNode`     | 基地节点 |
 | `CellTags`       | `relert.CellTag`      | 单元标记 |
 
-**注意**：覆盖物`Overlay`在地图中的存储方式有点特殊——它是以*Base64编码的二维数据*进行存储的。因此在`relert.js`中，并没有把它归类于物体`Object`，而是归类于后面介绍的`MapData`类型。
+**注意** ：覆盖物`Overlay`在地图中的存储方式有点特殊——它是以Base64编码的二维数据进行存储的。因此在`relert.js`中，并没有把它归类于物体`Object`，而是归类于后面介绍的`MapData`类型。
 
 
 
@@ -317,27 +317,137 @@ for (let i in civList) {
 
 下面章节将会介绍一些适用于所有`Object`“物体”数据代理的公共操作。
 
-虽然它们在地图中的存储形式不尽相同，但是`relert.js`尽量把它们包装成了相同的接口。
+虽然它们在地图中的存储形式不尽相同，但是`relert.js`尽量把它们包装成了相同的接口。接下来的部分都使用建筑`Structure`来举例。
 
 ###### 按注册号访问
+
+几乎所有的物体都是以一个列表来存储的，因此均可以以数据代理作为入口，按照注册号进行访问，得到表示单个物体的子代理：
+
+```javascript
+relert.Structure[0] //表示地图上的0号建筑
+relert.Structure[1] //表示地图上的1号建筑
+```
+
+你也可以通过`count`或者`length`属性，来获得一类物体的总数量：
+
+```javascript
+relert.Structure.count //地图上建筑的总数量
+relert.Structure.length //同上一条
+```
 
 ###### 遍历
 
 对于一个`Object`类型数据代理，`relert.js`提供了两种接口来方便的遍历它：`forEach`函数和`for ... of`循环。
 
+```javascript
+// forEach遍历接口
+relert.Structure.forEach((item, index) => {
+    //item为Structure之中一个元素的数据代理
+    //index为该元素的注册号（也可以不使用index）
+});
+```
+
+```javascript
+// for ... of遍历接口
+for (item of relert.Structure) {
+    //item为Structure之中一个元素的数据代理
+}
+```
+
+虽然通过`count`或`length`获得所有注册号，然后通过`for`循环按照注册号进行访问是可行的，但还是推荐使用上文的两种接口——它们内部对删除做了特殊处理，允许方便的边遍历边删除。
+
+```javascript
+// 遍历的同时进行删除
+relert.Structure.forEach((item) => {
+    if (...) { //如果满足了一定的条件
+        item.delete(); //此时删除正在被访问的item，遍历器仍然保证以后可以访问到每一个元素
+    }
+});
+```
+
 ###### 新增
 
 当我们需要新增一个物体的时候，只需要调用它相应代理下的`add`接口：
+
+```javascript
+// 添加一个新建筑
+relert.Structure.add({
+    X: 12, //要增加的新建筑的属性，详见各个子代理的参数列表
+    Y: 34,
+    ...//未指定的参数会被设置为默认值，详见各个子代理的参数列表
+});
+```
+
+`add`接口会返回新增物体的子代理。
 
 ###### 属性设置
 
 通过注册号或者遍历器获得子代理以后，相当于直接对某一个物体的属性进行操作了。
 
+可以把物体的属性当作对象属性，直接进行赋值和取值操作：
 
+```javascript
+// 赋值和取值操作
+relert.Structure.forEach((item) => { //此时item就表示了单独的某座建筑
+    relert.log(item.Type); //直接输出item.Type的值
+    item.Strength = 255; //直接给item.Strength赋值255
+});
+```
 
-###### 删除
+这些数据操作都会即时的反馈在`INI`的变化中。
+
+关于物体的属性，详见各个子代理的参数列表。
+
+同时修改多个属性建议使用`set`接口：
+
+```javascript
+// set接口同时设置多个属性的值
+relert.Structure.forEach((item) => { //此时item就表示了单独的某座建筑
+    item.set({ //使用子代理的set接口
+       Strength: 255,
+       AIRepair: 1, //同时设置多个属性的值
+    });
+});
+```
+
+###### 批量删除
+
+除了在遍历器中通过`item.delete()`删除特定的某个物体，主代理还提供了批量删除接口`delete`。该接口提供了两种使用方式，分别为输入一个**对象**和输入一个**函数**。
+
+输入对象，则是遍历其中的每一个物体，其属性与对象完全匹配时才执行删除：
+
+```javascript
+// delete接口的第一种使用方式：输入一个对象
+relert.Structure.delete({
+	House: 'Americans House',
+    Strength: '255',
+}); //从Structure中，删除所有House属性为Americans House且Strength为255的物体。
+//有多个属性必须完全匹配才会删除
+```
+
+输入函数，则是把每一个物体输入函数，返回`true`的时候会执行删除。
+
+```javascript
+// delete接口的第二种使用方式：输入一个函数
+relert.Structure.delete((item, index) => { //和forEach遍历器接口相同
+    if ((item.House == 'Americans House') && (item.Strength == '255')) {
+        return true; //函数返回值为true，该对象就会被删除
+    } else {
+        return false; //函数返回值为false就会删除
+    }
+});
+```
 
 ###### 查找类型
+
+对于一个未知类型的物体，我们可以通过读取它的`$category`属性，来确定它属于哪个数据代理：
+
+```javascript
+// 比如，structure是一个建筑子代理
+structure.$category == 'Structure';
+// 再比如，waypoint是一个路径点子代理
+waypoint.$category == 'Waypoint';
+```
 
 
 
@@ -349,7 +459,7 @@ for (let i in civList) {
 | --------------- | ------------------ | ----------------- |
 | `House`         | 所属方             | `'Neutral House'` |
 | `Type`          | 注册名             | `'GAPOWR'`        |
-| `Sterngth`      | 生命值             | `'255'`           |
+| `Strength`      | 生命值             | `'255'`           |
 | `X`             | `x`坐标            | `'0'`             |
 | `Y`             | `y`坐标            | `'0'`             |
 | `Facing`        | 面向               | `'0'`             |
@@ -818,7 +928,7 @@ relert.cls();
 
 `relert.Static.Toolbox`“工具箱”是一个独立的纯静态模块。
 
-该模块一旦加载，就会将一些可能被高频率使用的纯静态函数挂载在`relert`全局对象下。适当使用这些函数可以让代码更加方便可读。
+该模块一旦加载，就会将一些可能被高频率使用的纯静态函数挂载在`relert`全局对象下，或者添加到`Object`等原型上。适当使用这些函数可以让代码更加方便可读。
 
 下面分类对这些函数进行介绍：
 
@@ -844,6 +954,18 @@ relert.coordToPos(coord: String): Object;
 ```
 
 把`coord`格式转化为`pos`格式坐标。
+
+另外还可以通过下面的方法判断是否是合法的`pos`坐标：
+
+```javascript
+relert.isPos(pos: Object): Boolean;
+```
+
+如果输入合法的`pos`坐标，会返回`true`，否则返回`false`。注意这个函数只判断`X`、`Y`属性，不会判断这个坐标是否在地图合法区域内。
+
+#### 地图边界相关
+
+
 
 #### 几何相关
 
@@ -926,6 +1048,22 @@ relert.randomSelect(list: Array): Any;
 ```
 
 接受一个数组`list`，返回数组中的随机一项。
+
+#### 原型方法
+
+为了使用方便，一些常用函数除了挂载在`relert`上以外，还直接写进了原型方法。这些原型方法在下面列出：
+
+```javascript
+Object.prototype.set(obj: Object): Object;
+```
+
+对于对象`obj1`，`obj1.set(obj2)`将`obj2`的属性合并到`obj1`中（`obj1`本身会发生改变），并返回改变过的`obj1`。
+
+```javascript
+Array.prototype.randomItem(): Any;
+```
+
+对于数组`arr`，`arr.randomItem()`返回数组中的随机一项。
 
 
 
@@ -1022,9 +1160,15 @@ relert.save([filename: String, [content: Buffer]]);
 
 
 
-### 多个relert.js实例
+### 多个relert实例
 
-（施工中）
+在`node.js`环境中还有一个好处，就是你可以通过工厂函数，创建多个`relert`实例。这在浏览器环境中是做不到的。
+
+```javascript
+const relert1 = require('./script/relert.js')();
+const relert2 = require('./script/relert.js')();
+// relert1和relert2是两个不同的relert实例
+```
 
 
 
@@ -1034,6 +1178,8 @@ relert.save([filename: String, [content: Buffer]]);
 
 （施工中）
 
+
+
 ## 关于
 
 `relert.js-browser`版本`0.1`，2021年9月
@@ -1042,9 +1188,20 @@ relert.save([filename: String, [content: Buffer]]);
 
 * heli-lab
 
+
+
 ## 附录：relert.js代码风格约定
 
-（施工中）
+* `relert.js`遵循`ES6`标准，其代码风格也以`ES6`推荐的代码风格为基础。
+* 大括号不换行，且空1个空格。
+* 标识符命名基本使用大驼峰（PascalCase）和小驼峰（camelCase）两种命名规则：
+  * `Proxy`对象，即各级数据代理，使用大驼峰规则命名。例：`relert.BaseNode`。
+  * `INI`属性遵循原版`rules`的拼写风格，也使用大驼峰规则命名。例：`structure.UpgradesCount`。
+  * 内部常量使用全大写字母+下划线分隔命名。例：`ENCODING`。
+  * 对于内部标识符，在其标识符前加双下划线“`__`”。例：`__RelertObject`。
+  * 其余标识符使用小驼峰规则命名。
+
+
 
 ## 附录：常用逻辑示例代码
 
@@ -1064,7 +1221,7 @@ for (let i in civList) {
         // 如果不存在就新建一个空的
         relert.INI[civList[i]] = {};
     }
-    Object.assign(relert.INI[civList[i]], {
+    relert.INI[civList[i]].set({
         Insignificant: 'yes',
         Strength: '50',
     });
@@ -1081,14 +1238,14 @@ for (let i in civList) {
 // * 运行环境：浏览器
 
 let ignoreList = ['CAARMY01', 'CAARMY02', 'CAARMY03', 'CAARMY04', 'CATS01', 'CAEURO05', 'CAWASH18',
- 'CASANF15', 'CAFRMB', 'CAWT01', 'CAMSC01', 'CAMSC02', 'CAMSC03', 'CAMSC04', 'CAMSC05', 'CAMSC11', 'CAPARK01',
- 'CAPARK02', 'CAPARK03', 'CAPARK04', 'CAPARK05', 'CAPARK06', 'CAMISC04', 'CAPARS07', 'CAMSC06',
- 'CAURB01', 'CAURB02', 'CABARR01', 'CABARR02', 'CASIN03E', 'CASIN03S', 'CAMISC03', 'CAMISC05',
- 'CAMISC11', 'CASTRT05', 'INBLULMP', 'INREDLMP', 'INGALITE', 'INGRNLMP', 'INYELWLAMP', 'INORANLAMP',
- 'INPURPLAMP', 'CAOILD']; //定义一个ignoreList“忽略列表”，表示不想被此脚本处理的建筑物类型列表
+ 'CASANF15', 'CAFRMB', 'CAWT01', 'CAMSC01', 'CAMSC02', 'CAMSC03', 'CAMSC04', 'CAMSC05', 'CAMSC11', 
+ 'CAPARK01', 'CAPARK02', 'CAPARK03', 'CAPARK04', 'CAPARK05', 'CAPARK06', 'CAMISC04', 'CAPARS07', 
+ 'CAMSC06', 'CAURB01', 'CAURB02', 'CABARR01', 'CABARR02', 'CASIN03E', 'CASIN03S', 'CAMISC03',
+ 'CAMISC05', 'CAMISC11', 'CASTRT05', 'INBLULMP', 'INREDLMP', 'INGALITE', 'INGRNLMP', 'INYELWLAMP',
+ 'INORANLAMP', 'INPURPLAMP', 'CAOILD']; //定义一个ignoreList“忽略列表”，表示不想被此脚本处理的建筑物类型列表
 
 relert.Structure.forEach((item) => { //对于从Structure中取出每一个item
-	if ((item.House == 'Neutral Houe') && (!ignoreList.includes(item.Type)) { //如果其所属为Neutral House，且类型不在ignoreList内
+	if ((item.House == 'Neutral House') && (!ignoreList.includes(item.Type)) { //如果其所属为Neutral House，且类型不在ignoreList内
         item.set({
            Strength: randomStrength(0.15, 0.25), //设置其生命值在15%~25%之间
            AIRepair: '0', //设置其AI修复属性为0
@@ -1108,7 +1265,7 @@ relert.tickTimeOut(10000);
 //希望出现的树木类型
 let treeType = ['TREE05', 'TREE06', 'TREE07', 'TREE08', 'TREE10', 'TREE11', 'TREE12', 'TREE14', 'TREE15'];
 
-//判断Terrain是否是树木的函数
+//判断Terrain是否应该被替换的条件
 let isTree = (item) => {
     return (item.Type.substring(0, 4)) == 'TREE';
 }
@@ -1118,7 +1275,7 @@ let isTree = (item) => {
 let heatMap = {};
 //在权重图上放置树木
 let heatPlace = (item) => {
-    let r = 15; //每棵树木的影响半径/格
+    let r = 11; //每棵树木的影响半径/格
     for (let i = -r; i <= r; i++) {
         for (let j = -r; j <= r; j++) {
             let distance = Math.hypot(i, j);

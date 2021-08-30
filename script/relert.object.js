@@ -85,8 +85,8 @@ const __RelertObject = function() {
                     if (this.parent.INI[this.register][obj.regKey]) {
                         return this.parent.INI[this.register][obj.regKey].split(',')[this.parameters.indexOf(key)];
                     }
-                } else if (key == '$register') { // 注册表
-                    return this.register;
+                } else if (key == '$category') { // 类型
+                    return this.entrance;
                 } else if (key == 'delete') { // 删除方法
                     return () => {
                         delete this.parent.INI[this.register][obj.regKey];
