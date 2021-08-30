@@ -16,7 +16,7 @@ const __Environment = function() {
     this.exports = {
         isNode: this.isNode,
         isBrowser: this.isBrowser,
-        version: 0.1,
+        version: '0.0.1',
     }
 }
 

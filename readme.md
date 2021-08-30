@@ -595,7 +595,7 @@ waypoint.$category == 'Waypoint';
 * `relert.isNode: Boolean`：当前脚本是否在`node.js`下运行。
 
 * `relert.isBrowser: Boolean`：当前脚本是否在浏览器下运行。
-* `relert.version: Float`：当前`relert.js`的版本号。
+* `relert.version: String`：当前`relert.js`的版本号。
 
 需要时直接使用即可，没什么好说的。
 
@@ -1128,7 +1128,15 @@ relert.load(filename: String);
 relert.save([filename: String, [content: Buffer]]);
 ```
 
+在`node.js`环境中，通常我们需要自己手动完成读写文件的操作——脚本开始初始化`relert`示例以后手动读取文件，脚本执行结束后手动保存文件。
 
+但是有一个例外，就是命令行执行的时候带上需要读取的文件名：
+
+```shell
+node [scriptFileName] [mapFileName]
+```
+
+这样`scriptFileName`的脚本执行的时候，其中的`relert`实例都会默认加载`mapFileName`表示的文件。你也可以通过`relert.args`来读取命令行参数。
 
 
 
@@ -1138,31 +1146,48 @@ relert.save([filename: String, [content: Buffer]]);
 
 #### 判断入口
 
-（施工中）
+由于在`relert`实例初始化之前，没有`relert.Environment`模块可用，我们不能在最开头直接使用`relert.isNode`来判断脚本是在哪种环境中执行的。但由于浏览器环境中会预先实例化一个`relert`对象，我们可以通过判断`relert`对象的存在性来辨别运行环境：
+
+```javascript
+// 程序开头判断入口
+if (typeof relert == 'undefined') {
+    relert = require('./script/relert.js')(); //在node.js环境下，需要自己实例化relert对象
+}
+```
 
 #### 文件读写
 
-（施工中）
+避免使用`relert.load`接口，而是使用命令行参数来读取文件。
+
+在`node.js`环境下，需要自己手动保存文件：
+
+```javascript
+// 程序结尾保存文件
+if (relert.isNode) { //此时已经有relert实例，可以使用isNode来判断了
+    relert.save();
+}
+```
 
 #### 环境差异
 
-（施工中）
+在正确的实例化`relert`对象以后，使用`relert.isNode`和`relert.isBrowser`主动判断脚本的运行环境，来做出差异化的处理。
 
 #### 使用relert.log
 
-（施工中）
+使用`relert.log`而非`console.log`确保对两个运行环境的兼容。
 
 
 
 ### 多个relert实例
 
-在`node.js`环境中还有一个好处，就是你可以通过工厂函数，创建多个`relert`实例。这在浏览器环境中是做不到的。
+在`node.js`环境中还有一个好处，就是你可以通过工厂函数，创建多个`relert`实例。**这在浏览器环境中是做不到的**。
 
 ```javascript
 const relert1 = require('./script/relert.js')();
 const relert2 = require('./script/relert.js')();
-// relert1和relert2是两个不同的relert实例
 ```
+
+此时`relert1`和`relert2`就是两个不同的`relert`实例。可以读取不同的文件，也可以在二者之间传递数据。你甚至可以做出“把一张地图拆成两张”或者“把两张地图合并为一张”等操作，具体如何使用就要发挥想象力了。
 
 
 
