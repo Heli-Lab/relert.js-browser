@@ -119,9 +119,9 @@ const __RelertObject = function() {
                     }
                 } else if (!(this.arrayLike)) { // 坐标注册元素额外的X、Y属性
                     if (key == 'X') {
-                        return obj.regKey.substring(obj.regKey.length - 3).replace(/\b(0+)/gi, '');
+                        return parseInt(obj.regKey.substring(obj.regKey.length - 3).replace(/\b(0+)/gi, ''));
                     } else if (key == 'Y') {
-                        return obj.regKey.substring(0, obj.regKey.length - 3).replace(/\b(0+)/gi, '');
+                        return parseInt(obj.regKey.substring(0, obj.regKey.length - 3).replace(/\b(0+)/gi, ''));
                     }
                 }
             },

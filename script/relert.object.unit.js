@@ -30,18 +30,18 @@ const __Unit = function() {
     this.defaults = {
         'House': 'Neutral House',
         'Type': 'E1',
-        'Strength': '255',
-        'X': '0',
-        'Y': '0',
-        'Facing': '0',
+        'Strength': 255,
+        'X': 0,
+        'Y': 0,
+        'Facing': 0,
         'Status': 'Guard',
         'Tag': 'none',
-        'Experience': '0',
-        'Team': '-1',
-        'OnBridge': '0',
-        'FollowID': '-1',
-        'Recombinant': '0',
-        'AIRecombinant': '1',
+        'Experience': 0,
+        'Team': -1,
+        'OnBridge': 0,
+        'FollowID': -1,
+        'Recombinant': 0,
+        'AIRecombinant': 1,
     };
     this.arrayLike = true;
 }

@@ -19,7 +19,7 @@
         'Prefix': 'G',
         'Suffix': 'Allied',
         'SmartAI': 'yes',
-        'CostUnitsMult': '1',
+        'CostUnitsMult': 1,
         'ParentCountry': 'Americans',
     };
 }

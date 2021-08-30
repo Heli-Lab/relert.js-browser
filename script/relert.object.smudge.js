@@ -19,8 +19,8 @@
     ]
     this.defaults = {
         'Type': 'CRATER01',
-        'X': '0',
-        'Y': '0',
+        'X': 0,
+        'Y': 0,
         'Ignore': '0',
     };
     this.arrayLike = true;

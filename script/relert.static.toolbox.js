@@ -11,22 +11,22 @@ const __Toolbox = function() {
     }
 
     this.mapWidth = () => {
-        return this.parent.INI['Map']['Size'].split(',')[2];
+        return parseInt(this.parent.INI['Map']['Size'].split(',')[2]);
     }
 
     this.mapHeight = () => {
-        return this.parent.INI['Map']['Size'].split(',')[3];
+        return parseInt(this.parent.INI['Map']['Size'].split(',')[3]);
     }
 
     this.posInnerMap = (pos) => {
-
+        let width = this.mapWidth();
+        let height = this.mapHeight();
+        let x = parseInt(pos.X);
+        let y = parseInt(pos.Y);
+        return ((x + y) > width) && ((x + y) <= (width + height * 2)) && ((x - y) < width) && ((y - x) < width);
     }
 
     this.exports = {
-        // 地图尺寸相关
-        mapWidth: this.mapWidth,
-        mapHeight: this.mapHeight,
-        posInnerMap: this.posInnerMap,
         // 坐标转换相关
         posToCoord: (pos) => {
             return pos.Y.toString() + pos.X.toString().padStart(3, '0');
@@ -34,12 +34,20 @@ const __Toolbox = function() {
         coordToPos: (coord) => {
             let str = coord.toString();
             return {
-                X: str.subString(str.length - 3).replace(/\b(0+)/gi, ''),
-                Y: str.subString(0, str.length - 3).replace(/\b(0+)/gi, ''),
+                X: parseInt(str.subString(str.length - 3).replace(/\b(0+)/gi, '')),
+                Y: parseInt(str.subString(0, str.length - 3).replace(/\b(0+)/gi, '')),
             };
         },
         isPos: (pos) => {
             return (typeof pos.X == 'number') && (typeof pos.Y == 'number');
+        },
+        // 地图尺寸相关
+        mapWidth: this.mapWidth,
+        mapHeight: this.mapHeight,
+        posInnerMap: this.posInnerMap,
+        // 几何相关、
+        posInnerCircle: (pos, center, r) => {
+            return (Math.hypot(parseInt(pos.X) - parseInt(center.X), parseInt(pos.Y) - parseInt(center.Y)) < r);
         },
         // 随机数相关
         randomFacing: () => {

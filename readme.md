@@ -965,31 +965,35 @@ relert.isPos(pos: Object): Boolean;
 
 #### 地图边界相关
 
+```javascript
+relert.mapWidth(): Integer;
+```
 
+返回地图的宽度。
 
-#### 几何相关
+```javascript
+relert.mapHeight(): Integer;
+```
+
+返回地图的高度。
 
 ```javascript
 relert.posInnerMap(pos: Object): Boolean;
 ```
 
-接受一个`pos`坐标对象（一个带有`X`和`Y`属性的对象，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。（暂未实装）
+接受一个`pos`坐标对象（一个带有`X`和`Y`属性的对象，代表它的X坐标和Y坐标），返回它的坐标是否在地图内。
 
 可以将`relert.js`提供的，数据代理层的“物体”对象直接传入，因为它们都有`X`和`Y`属性。
 
 也可以输入形如`{X: 12, Y: 34}`这样的对象，直接指定坐标。
 
+#### 几何相关
+
 ```javascript
 relert.posInnerCircle(pos: Object, center: Object, r: Number): Boolean;
 ```
 
-接受一个`pos`坐标对象（一个带有`X`和`Y`属性的对象，代表它的X坐标和Y坐标），返回它的坐标是否在圆心为`pos`坐标`center`、半径为`r`的圆内。（暂未实装）
-
-```javascript
-relert.posInnerTriangle(obj1: Object, obj2: Object, obj3: Object): Boolean;
-```
-
-（暂未实装）
+接受一个`pos`坐标对象（一个带有`X`和`Y`属性的对象，代表它的X坐标和Y坐标），返回它的坐标是否在圆心为`pos`坐标`center`、半径为`r`的圆内。
 
 #### 随机数相关
 

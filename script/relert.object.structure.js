@@ -33,21 +33,21 @@ const __Structure = function() {
     this.defaults = {
         'House': 'Neutral House',
         'Type': 'GAPOWR',
-        'Strength': '255',
-        'X': '0',
-        'Y': '0',
-        'Facing': '0',
+        'Strength': 255,
+        'X': 0,
+        'Y': 0,
+        'Facing': 0,
         'Tag': 'none',
-        'Sellable': '0',
-        'Rebuild': '0',
-        'Enabled': '1',
-        'UpgradesCount': '0',
-        'SpotLight': '0',
+        'Sellable': 0,
+        'Rebuild': 0,
+        'Enabled': 1,
+        'UpgradesCount': 0,
+        'SpotLight': 0,
         'Upgrade1': 'none',
         'Upgrade2': 'none',
         'Upgrade3': 'none',
-        'AIRepair': '1',
-        'ShowName': '0'
+        'AIRepair': 1,
+        'ShowName': 0
     };
     this.arrayLike = true;
 }

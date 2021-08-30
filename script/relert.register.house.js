@@ -13,16 +13,16 @@
     this.register = 'Houses';
     this.addName = true;
     this.defaults = {
-        'IQ': '5',
+        'IQ': 5,
         'Edge': 'North',
         'Name': '',
         'Color': 'DarkBlue',
         'Allies': '',
         'Country': '',
-        'Credits': '0',
-        'NodeCount': '0',
-        'TechLevel': '10',
-        'PercentBuilt': '100',
+        'Credits': 0,
+        'NodeCount': 0,
+        'TechLevel': 10,
+        'PercentBuilt': 100,
         'PlayerControl': 'no',
     };
 }
