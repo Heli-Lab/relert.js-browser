@@ -59,15 +59,15 @@ const __Toolbox = function() {
     // 原型方法添加
 
     // Object.set
-    Object.prototype.set = function(obj) {
-        Object.assign(this, obj);
-        return this;
-    }
-
-    // Array.randomItem
-    Array.prototype.randomItem = function() {
-        return this[Math.trunc(Math.random() * this.length)];
-    }
+    Object.defineProperty(Object.prototype, 'set', {
+        value: function(obj) {
+            Object.assign(this, obj);
+            return this;
+        },
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
 
 }
 

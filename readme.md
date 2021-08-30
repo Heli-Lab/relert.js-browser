@@ -1059,12 +1059,6 @@ Object.prototype.set(obj: Object): Object;
 
 对于对象`obj1`，`obj1.set(obj2)`将`obj2`的属性合并到`obj1`中（`obj1`本身会发生改变），并返回改变过的`obj1`。
 
-```javascript
-Array.prototype.randomItem(): Any;
-```
-
-对于数组`arr`，`arr.randomItem()`返回数组中的随机一项。
-
 
 
 ## 浏览器环境模块

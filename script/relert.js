@@ -72,13 +72,13 @@ const __Relert = function() {
 
     ];
 
-    // 浏览器端额外的模块
     if (isBrowser) {
-        enabled_modules.push('relert.timeline');
-        enabled_modules.push('relert.editor');
-        enabled_modules.push('relert.sandbox');
+        enabled_modules = enabled_modules.concat([
+            'relert.sandbox',
+            'relert.editor',
+            'relert.timeline',
+        ]);
     }
-
     // 加载模块
     __loadModules();
 }
