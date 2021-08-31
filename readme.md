@@ -1355,7 +1355,7 @@ relert.Terrain.forEach((item) => {
 ### 随机生成
 
 ```javascript
-// relert.js范例：随机生成污染
+// relert.js范例C-1：随机生成污染
 // * 用途：在地图上随机生成污染
 // * 运行环境：浏览器
 
@@ -1369,11 +1369,45 @@ let smudgeList = []; //污染种类
 
 ### 批量删除物体
 
+```javascript
+// relert.js范例D-1：删除地图外物体
+// * 用途：批量删除地图边界区域以外的物体
+// * 运行环境：浏览器
+
+relert.Structure.delete((item) => {
+    return !relert.posInnerMap(item);
+});
+
+relert.Infantry.delete((item) => {
+    return !relert.posInnerMap(item);
+});
+
+relert.Unit.delete((item) => {
+    return !relert.posInnerMap(item);
+});
+
+relert.Aircraft.delete((item) => {
+    return !relert.posInnerMap(item);
+});
+
+relert.Terrain.delete((item) => {
+    return !relert.posInnerMap(item);
+});
+
+relert.Smudge.delete((item) => {
+    return !relert.posInnerMap(item);
+});
+```
+
+
+
 ### 触发组制作
 
 （施工中）
 
-### 修改地形
+### 修改地形与覆盖物
 
 （施工中）
+
+
 
