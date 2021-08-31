@@ -241,7 +241,7 @@ relert.INI['SectionA']['keyA1']
 
 #### 多属性操作
 
-如果想要同时对多个属性进行操作，可以考虑使用我们在`relert.Toolbox`模块为`Object`引入的原型方法：`Object.prototype.set`。
+如果想要同时对多个属性进行操作，可以考虑使用我们在`relert.Toolbox`模块为`Object`引入的原型方法：`Object.prototype.assign`。
 
 下面展示一个实用性的例子：
 
@@ -257,11 +257,11 @@ for (let i in civList) {
         // 如果不存在就新建一个空的
         relert.INI[civList[i]] = {};
     }
-    // 使用set()方法将后面的对象合并入前面的relert.INI[civList[i]]
-    relert.INI[civList[i]].set({
+    // 使用assign()方法将后面的对象合并入前面的relert.INI[civList[i]]
+    relert.INI[civList[i]].assign({
         // 这样利用合并机制，可以同时修改多个属性
         Insignificant: 'yes',
-        Strength: '50',
+        Strength: 50,
     });
 }
 ```
@@ -398,12 +398,12 @@ relert.Structure.forEach((item) => { //此时item就表示了单独的某座建�
 
 关于物体的属性，详见各个子代理的参数列表。
 
-同时修改多个属性建议使用`set`接口：
+同时修改多个属性建议使用`assign`接口：
 
 ```javascript
-// set接口同时设置多个属性的值
+// assign接口同时设置多个属性的值
 relert.Structure.forEach((item) => { //此时item就表示了单独的某座建筑
-    item.set({ //使用子代理的set接口
+    item.assign({ //使用子代理的assign接口
        Strength: 255,
        AIRepair: 1, //同时设置多个属性的值
     });
@@ -420,7 +420,7 @@ relert.Structure.forEach((item) => { //此时item就表示了单独的某座建�
 // delete接口的第一种使用方式：输入一个对象
 relert.Structure.delete({
 	House: 'Americans House',
-    Strength: '255',
+    Strength: 255,
 }); //从Structure中，删除所有House属性为Americans House且Strength为255的物体。
 //有多个属性必须完全匹配才会删除
 ```
@@ -1058,10 +1058,10 @@ relert.randomSelect(list: Array): Any;
 为了使用方便，一些常用函数除了挂载在`relert`上以外，还直接写进了原型方法。这些原型方法在下面列出：
 
 ```javascript
-Object.prototype.set(obj: Object): Object;
+Object.prototype.assign(obj: Object): Object;
 ```
 
-对于对象`obj1`，`obj1.set(obj2)`将`obj2`的属性合并到`obj1`中（`obj1`本身会发生改变），并返回改变过的`obj1`。
+对于对象`obj1`，`obj1.assign(obj2)`将`obj2`的属性合并到`obj1`中（`obj1`本身会发生改变），并返回改变过的`obj1`。
 
 
 
@@ -1244,9 +1244,9 @@ for (let i in civList) {
         // 如果不存在就新建一个空的
         relert.INI[civList[i]] = {};
     }
-    relert.INI[civList[i]].set({
+    relert.INI[civList[i]].assign({
         Insignificant: 'yes',
-        Strength: '50',
+        Strength: 50,
     });
 }
 ```
@@ -1269,9 +1269,9 @@ let ignoreList = ['CAARMY01', 'CAARMY02', 'CAARMY03', 'CAARMY04', 'CATS01', 'CAE
 
 relert.Structure.forEach((item) => { //对于从Structure中取出每一个item
 	if ((item.House == 'Neutral House') && (!ignoreList.includes(item.Type)) { //如果其所属为Neutral House，且类型不在ignoreList内
-        item.set({
+        item.assign({
            Strength: randomStrength(0.15, 0.25), //设置其生命值在15%~25%之间
-           AIRepair: '0', //设置其AI修复属性为0
+           AIRepair: 0, //设置其AI修复属性为0
         });
     }
 });

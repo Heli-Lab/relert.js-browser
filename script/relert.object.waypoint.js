@@ -47,7 +47,7 @@
                     return () => {
                         delete this.parent.INI[this.register][obj.regKey];
                     }
-                } else if (key == 'set') { // set方法：同时修改多条属性
+                } else if (key == 'assign') { // assign方法：同时修改多条属性
                     return (newObj) => {
                         let oldData = this.parent.INI[this.register][obj.regKey];
                         let x = newObj.X ? newObj.X : oldData.substring(oldData.length - 3);

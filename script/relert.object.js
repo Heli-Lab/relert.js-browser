@@ -94,7 +94,7 @@ const __RelertObject = function() {
                             this.parent.INI[this.register].splice(obj.regKey, 1);
                         }
                     }
-                } else if (key == 'set') { // set方法：同时修改多条属性
+                } else if (key == 'assign') { // assign方法：同时修改多条属性
                     return (newObj) => {
                         let params = [];
                         let oldParams = this.parent.INI[this.register][obj.regKey].split(',');

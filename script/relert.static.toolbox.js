@@ -66,8 +66,8 @@ const __Toolbox = function() {
 
     // 原型方法添加
 
-    // Object.set
-    Object.defineProperty(Object.prototype, 'set', {
+    // Object.assign
+    Object.defineProperty(Object.prototype, 'assign', {
         value: function(obj) {
             Object.assign(this, obj);
             return this;
