@@ -85,6 +85,9 @@ const editor = new function() {
                 editor.dragTab(editor.draggingIndex, $(this).attr('index'));
             }
         });
+
+        //文件名
+        $('#topbar-input-filename').val(this.getFileName());
     }
 
     // 新增标签
@@ -191,7 +194,7 @@ const editor = new function() {
 
     // 保存标签页
     this.saveTab = (i = this.currentIndex) => {
-
+        relert.save(this.tabs[i].fileName, this.tabs[i].data);
     }
 
     // 产生新标签的2种来源：打开文件，新建标签

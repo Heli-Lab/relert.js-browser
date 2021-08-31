@@ -14,6 +14,7 @@ const sandbox = new function() {
             let editor = undefined;
             let sandbox = undefined;
             let $ = undefined;
+            relert.log(`Running Script: ${scriptName}`);
             relert.tickProcess(() => {
                 try {
                     eval(`${script}
@@ -42,6 +43,7 @@ const sandbox = new function() {
                     throw(err);
                 }
             });
+            relert.log(`Script ${scriptName} exit normally.`);
         })();
     }
 }

@@ -19,7 +19,7 @@
                     <button id="topbar-btn-open" class="card">打开</button>
                     <button id="topbar-btn-save" class="card">保存</button>
                     <label>文件名</label>
-                    <input placeholder="" />
+                    <input id="topbar-input-filename" placeholder="" />
                     <button id="topbar-btn-run" class="card">运行</button>
                     <input type="file" accept=".js" id="openJs" style="display: none;"/>
                     <button id="topbar-btn-help" class="card right">帮助</button>
@@ -76,7 +76,7 @@
             });
 
             $('#topbar-btn-save').on('click', () => {
-                $openJs.click();
+                editor.saveTab();
             });
 
             $('#topbar-btn-run').on('click', () => {
@@ -85,6 +85,14 @@
 
             $('#topbar-btn-help').on('click', () => {
                 window.open('./readme.html','_blank');
+            });
+
+            $('#topbar-input-filename').on('input', () => {
+                let filename = $('#topbar-input-filename').val();
+                if (!filename.endsWith('.js')) {
+                    filename += '.js';
+                }
+                editor.setFileName(filename);
             });
 
             // log栏
