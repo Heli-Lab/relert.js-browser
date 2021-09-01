@@ -70,6 +70,8 @@ const __Relert = function() {
         'relert.register.country',
         'relert.register.house',
 
+        'relert.mapdata',
+
     ];
 
     if (isBrowser) {
