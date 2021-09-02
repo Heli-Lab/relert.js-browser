@@ -118,7 +118,7 @@ const __RelertMapData = function() {
             this.lzo1x.compress(buffer);
             // 拼接
             data_binaryString += String.fromCharCode(Math.trunc(buffer.outputBuffer.length % 256));
-            data_binaryString += String.fromCharCode(Math.trunc(buffer.outputBuffer.length % 256));
+            data_binaryString += String.fromCharCode(Math.trunc(buffer.outputBuffer.length / 256));
             data_binaryString += String.fromCharCode(Math.trunc(chunkSize % 256));
             data_binaryString += String.fromCharCode(Math.trunc(chunkSize / 256));
             for (let m = 0; m < buffer.outputBuffer.length; m++) {
