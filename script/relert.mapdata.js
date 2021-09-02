@@ -121,7 +121,9 @@ const __RelertMapData = function() {
             data_binaryString += String.fromCharCode(Math.trunc(buffer.outputBuffer.length % 256));
             data_binaryString += String.fromCharCode(Math.trunc(chunkSize % 256));
             data_binaryString += String.fromCharCode(Math.trunc(chunkSize / 256));
-            data_binaryString += String.fromCharCode(...buffer.outputBuffer);
+            for (let m = 0; m < buffer.outputBuffer.length; m++) {
+                data_binaryString += String.fromCharCode(buffer.outputBuffer[m]);
+            }
         }
 
         // Base64编码
@@ -132,8 +134,8 @@ const __RelertMapData = function() {
         let ini = {};
         while (k < data_base64.length) {
             let lineSize = ((k + LINE_LENGTH) >= data_base64.length) ? (data_base64.length - k - 1) :  LINE_LENGTH;
-            ini[count] = data_base64.substring(k, lineSize);
-            k += lineSize;
+            ini[count] = data_base64.substring(k, lineSize + k);
+            k += LINE_LENGTH;
             count ++;
         }
 
