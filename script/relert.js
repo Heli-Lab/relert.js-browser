@@ -71,6 +71,7 @@ const __Relert = function() {
         'relert.register.house',
 
         'relert.mapdata',
+        'relert.mapdata.mappack',
 
     ];
 

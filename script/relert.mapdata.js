@@ -8,6 +8,9 @@ globalThis = this;
 const __RelertMapData = function() {
     // 入口
     this.entrance = '';
+    this.register = '';
+    this.parameters = [];
+    this.defaults = {};
     // 挂载点
     this.mount = (parent) => {
         this.parent = parent;
@@ -21,13 +24,25 @@ const __RelertMapData = function() {
         });
     }
     // 主代理
-    this.proxy = new Proxy({}, {
-        apply: (obj, target, args) => {
-            let data = this.unpack();
-            if (typeof args[0] == 'function') {
-                data = args[0](data);
+    this.proxy = new Proxy(() => {}, {
+        apply: (func, target, args) => {
+            let data = this.readData(this.unpack(this.parent.INI[this.register]));
+            let getData = (key) => {
+                if (typeof key == 'object') {
+                    if ((key.X) && (key.Y)) {
+                        if (!data[key.X]) {
+                            data[key.X] = {};
+                        }
+                        if (!data[key.X][key.Y]) {
+                            data[key.X][key.Y] = this.defaults;
+                        }
+                        return data[key.X][key.Y];
+                    }
+                }
             }
-            this.pack(data);
+            if (typeof args[0] == 'function') {
+                args[0](getData);
+            }
         }
     });
 
@@ -51,6 +66,8 @@ const __RelertMapData = function() {
             return window.btoa(data);
         }
     }
+
+    this.lzo1x.setReturnNewBuffers(true);
 
     // 解包函数
     this.unpack = (ini) => {
@@ -88,7 +105,6 @@ const __RelertMapData = function() {
             // 拼接区块
             data_decompressed.push(...buffer.outputBuffer);
         }
-
         return data_decompressed;
     }
 
@@ -141,6 +157,39 @@ const __RelertMapData = function() {
 
         return ini;
     }
+
+    // 读取数据
+    this.readData = (data_decompressed) => {
+        let mapdataObj = {};
+
+        let i = 0;
+        let tempObj = {};
+        while (i < data_decompressed.length) {
+            for (let j in this.parameters) {
+                tempObj[this.parameters[j].name] = 0;
+                for (let k = 0; k < this.parameters[j].bytes; k++) {
+                    tempObj[this.parameters[j].name] += data_decompressed[i] * (256 ** k);
+                    i++;
+                }
+            }
+
+            let X = tempObj.X;
+            let Y = tempObj.Y;
+            delete tempObj.X;
+            delete tempObj.Y;
+
+            if (!mapdataObj[X]) {
+                mapdataObj[X] = {};
+            }
+            mapdataObj[X][Y] = Object.assign({}, tempObj);
+
+        }
+
+        return mapdataObj;
+    }
+
+
+
 }
 
 // 导出
