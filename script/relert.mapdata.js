@@ -50,7 +50,7 @@ const __RelertMapData = function() {
 
     // 引入解码模块
     if (this.isNode) {
-        this.lzo1x = require('./lzo1x.min.js');
+        this.compressor = require('./wwcompression.js');
         this.atob = (data) => {
             return buffer.atob(data)
         };
@@ -58,7 +58,7 @@ const __RelertMapData = function() {
             return buffer.btoa(data);
         }
     } else {
-        this.lzo1x = lzo1x;
+        this.compressor = wwCompression;
         this.atob = (data) => {
             return window.atob(data)
         };
@@ -66,8 +66,6 @@ const __RelertMapData = function() {
             return window.btoa(data);
         }
     }
-
-    this.lzo1x.setReturnNewBuffers(true);
 
     // 解包函数
     this.unpack = (ini) => {
@@ -96,14 +94,12 @@ const __RelertMapData = function() {
                 data_compressed[j] = data_bytes[i + j];
             }
             i += inputSize;
+            let outputBuffer = new Uint8Array(outputSize);
             // 解压缩
-            let buffer = {
-                inputBuffer: data_compressed,
-                outputBuffer: null,
-            }
-            this.lzo1x.decompress(buffer);
+            this.compressor.LCWDecompress(data_compressed, 0, outputBuffer, data_compressed.length);
+            console.log(outputBuffer);
             // 拼接区块
-            data_decompressed.push(...buffer.outputBuffer);
+            data_decompressed.push(...outputBuffer);
         }
         return data_decompressed;
     }
@@ -127,18 +123,14 @@ const __RelertMapData = function() {
             }
             i += CHUNK_LENGTH;
             // 压缩
-            let buffer = {
-                inputBuffer: chunk,
-                outputBuffer: null,
-            }
-            this.lzo1x.compress(buffer);
+            let outputBuffer = this.compressor.LCWCompress(chunk);
             // 拼接
-            data_binaryString += String.fromCharCode(Math.trunc(buffer.outputBuffer.length % 256));
-            data_binaryString += String.fromCharCode(Math.trunc(buffer.outputBuffer.length / 256));
+            data_binaryString += String.fromCharCode(Math.trunc(outputBuffer.length % 256));
+            data_binaryString += String.fromCharCode(Math.trunc(outputBuffer.length / 256));
             data_binaryString += String.fromCharCode(Math.trunc(chunkSize % 256));
             data_binaryString += String.fromCharCode(Math.trunc(chunkSize / 256));
-            for (let m = 0; m < buffer.outputBuffer.length; m++) {
-                data_binaryString += String.fromCharCode(buffer.outputBuffer[m]);
+            for (let m = 0; m < outputBuffer.length; m++) {
+                data_binaryString += String.fromCharCode(outputBuffer[m]);
             }
         }
 

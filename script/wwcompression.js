@@ -30,7 +30,7 @@ wwCompression = new function() {
         let getp = 0;
         let putp = 0;
         let getend = input.length;
-        let worstcase = Math.Max(10000, getend * 2);
+        let worstcase = Math.max(10000, getend * 2);
         let output = new Array(worstcase);
         if (relative) {
             output[putp++] = 0;
@@ -170,9 +170,7 @@ wwCompression = new function() {
                             output[writeOffset++] = input[readOffset];
                         }
                         readOffset++;
-                    }
-                    else
-                    {
+                    } else {
                         let s;
                         if (flag == 0xFF) {
                             if (readOffset >= readEnd) {
@@ -274,7 +272,7 @@ wwCompression = new function() {
         let putp = 0;
         let getsp = 0;
         let getbp = 0;
-        let getsendp = Math.Min(source.length, base.length);
+        let getsendp = Math.min(source.length, base.length);
         let dest = new Array(this.XORWorstCase(getsendp));
 
         while (getsp < getsendp) {

@@ -54,7 +54,7 @@ const __Toolbox = function() {
             return Math.trunc(Math.random() * 8) * 32;
         },
         randomStrength: (a, b) => {
-            Math.trunc(255 * (a + Math.random() * (b - a)))
+            return Math.trunc(255 * (a + Math.random() * (b - a)))
         },
         randomBetween: (a, b) => {
             return Math.trunc(a + Math.random() * (b - a));

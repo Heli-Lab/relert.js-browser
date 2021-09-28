@@ -99,7 +99,7 @@ const __RelertObject = function() {
                         let params = [];
                         let oldParams = this.parent.INI[this.register][obj.regKey].split(',');
                         for (let i in this.parameters) {
-                            if (newObj[this.parameters[i]]) {
+                            if (!(newObj[this.parameters[i]] === undefined)) {
                                 params.push(newObj[this.parameters[i]]);
                             } else {
                                 params.push(oldParams[i]);

@@ -17,8 +17,7 @@ const sandbox = new function() {
             relert.log(`Running Script: ${scriptName}`);
             relert.tickProcess(() => {
                 try {
-                    eval(`${script}
-                    \/\/# sourceURL=${scriptName}`);
+                    eval(script + '\n\/\/# sourceURL=' + scriptName);
                 } catch (err) {
                     let errorMessage = (err) => {
                         let stack = ErrorStackParser.parse(err);

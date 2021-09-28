@@ -1281,9 +1281,9 @@ let ignoreList = ['CAARMY01', 'CAARMY02', 'CAARMY03', 'CAARMY04', 'CATS01', 'CAE
  'INORANLAMP', 'INPURPLAMP', 'CAOILD']; //定义一个ignoreList“忽略列表”，表示不想被此脚本处理的建筑物类型列表
 
 relert.Structure.forEach((item) => { //对于从Structure中取出每一个item
-	if ((item.House == 'Neutral House') && (!ignoreList.includes(item.Type)) { //如果其所属为Neutral House，且类型不在ignoreList内
+	if ((item.House == 'Neutral House') && (!ignoreList.includes(item.Type))) { //如果其所属为Neutral House，且类型不在ignoreList内
         item.assign({
-           Strength: randomStrength(0.15, 0.25), //设置其生命值在15%~25%之间
+           Strength: relert.randomStrength(0.15, 0.25), //设置其生命值在15%~25%之间
            AIRepair: 0, //设置其AI修复属性为0
         });
     }

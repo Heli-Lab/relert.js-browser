@@ -23,6 +23,7 @@
                     <button id="topbar-btn-run" class="card">运行</button>
                     <input type="file" accept=".js" id="openJs" style="display: none;"/>
                     <button id="topbar-btn-help" class="card right">帮助</button>
+                    <button id="topbar-btn-github" class="card right">Github</button>
                 </div>
                 <div id="content">
                     <div id="tabs"></div>
@@ -45,8 +46,9 @@
         <!-- Editor 相关 -->
         <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/ace/test/ace.min.js"></script>
         <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/ace/test/mode-javascript.min.js"></script>
+        <!-- 编码相关 -->
+        <script type="text/javascript" src="./script/wwcompression.js"></script>
         <!-- 其他第三方库 -->
-        <script type="text/javascript" src="./script/lzo1x.min.js"></script>
         <script type="text/javascript" src="./script/iconv-lite.min.js"></script>
         <script type="text/javascript" src="./script/error-stack-parser.min.js"></script>
         <!-- relert.js -->
@@ -86,6 +88,10 @@
 
             $('#topbar-btn-help').on('click', () => {
                 window.open('./readme.html','_blank');
+            });
+
+            $('#topbar-btn-github').on('click', () => {
+                window.open('https://github.com/Heli-Lab/relert.js-browser','_blank');
             });
 
             $('#topbar-input-filename').on('input', () => {
