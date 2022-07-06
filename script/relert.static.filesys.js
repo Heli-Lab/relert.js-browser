@@ -20,8 +20,8 @@ const __FileSys = function() {
     // 字符串转成带有INI结构的json object
     this.stringToINI = (data) => {
         var regex = {
-            section: /^\s*\s*\[([^]*)\s*\]\s*$/,
-            param: /^\s*([\w\.\-\_]+)\s*=\s*(.*?)\s*$/,
+            section: /^\s*\s*\[([^]*)\s*\]\s*(;.*)*$/,
+            param: /^\s*([\w\.\-\_]+)\s*=\s*(.*?)\s*(;.*)*$/,
             comment: /^\s*;.*$/
         };
         var value = {};
@@ -41,8 +41,6 @@ const __FileSys = function() {
                 var match = line.match(regex.section);
                 value[match[1]] = {};
                 section = match[1];
-            } else if (line.length == 0 && section) {
-                section = null;
             };
         });
         return value;
